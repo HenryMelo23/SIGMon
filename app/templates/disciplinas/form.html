@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Disciplina | SIGMon{% endblock %}
+{% block page_heading %}{{ "Editar" if disciplina else "Nova" }} disciplina{% endblock %}
+{% block content %}
+<form class="panel form-grid" method="post">
+  <label>Código <input name="codigo" value="{{ disciplina.codigo if disciplina else '' }}" required></label>
+  <label>Créditos <input type="number" name="creditos" value="{{ disciplina.creditos if disciplina else 4 }}" required></label>
+  <label>Departamento
+    <select name="id_departamento">
+      {% for departamento in departamentos %}
+      <option value="{{ departamento.id_departamento }}" {% if disciplina and disciplina.id_departamento == departamento.id_departamento %}selected{% endif %}>{{ departamento.sigla }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label class="full">Nome <input name="nome" value="{{ disciplina.nome if disciplina else '' }}" required></label>
+  <div class="actions full">
+    <button class="btn btn-primary">Salvar</button>
+    <a class="btn btn-outline" href="{{ url_for('disciplinas.index') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

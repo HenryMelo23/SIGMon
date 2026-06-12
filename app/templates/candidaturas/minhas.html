@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Minhas candidaturas | SIGMon{% endblock %}
+{% block page_heading %}Minhas candidaturas{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header">
+    <h2>Acompanhamento</h2>
+    <a class="btn btn-primary" href="{{ url_for('editais.index', status='aberto') }}">Ver editais abertos</a>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Edital</th><th>Data</th><th>IRA</th><th>Nota</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for c in candidaturas %}
+      <tr>
+        <td>{{ get_edital(c.id_edital).titulo }}</td>
+        <td>{{ c.data_inscricao }}</td>
+        <td>{{ c.ira }}</td>
+        <td>{{ c.nota_disciplina }}</td>
+        <td>{% set status = c.status %}{% include "partials/status_badge.html" %}</td>
+      </tr>
+      {% else %}
+        {% set colspan = 5 %}{% include "partials/table_empty.html" %}
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

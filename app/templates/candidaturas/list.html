@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Candidaturas | SIGMon{% endblock %}
+{% block page_heading %}Candidaturas{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header"><h2>Análise de candidaturas</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Edital</th><th>Estudante</th><th>IRA</th><th>Nota</th><th>Status</th><th>Alterar</th></tr></thead>
+      <tbody>
+      {% for c in candidaturas %}
+      <tr>
+        <td>{{ get_edital(c.id_edital).titulo }}</td>
+        <td>{{ get_usuario(c.id_estudante).nome }}</td>
+        <td>{{ c.ira }}</td>
+        <td>{{ c.nota_disciplina }}</td>
+        <td>{% set status = c.status %}{% include "partials/status_badge.html" %}</td>
+        <td>
+          <form class="actions" method="post" action="{{ url_for('candidaturas.status', id=c.id_candidatura) }}">
+            <select name="status">
+              {% for s in ["INSCRITA","EM_ANALISE","APROVADA","REPROVADA","CANCELADA"] %}
+              <option value="{{ s }}" {% if c.status == s %}selected{% endif %}>{{ s|replace("_", " ")|title }}</option>
+              {% endfor %}
+            </select>
+            <button class="btn btn-primary">Salvar</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+        {% set colspan = 6 %}{% include "partials/table_empty.html" %}
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

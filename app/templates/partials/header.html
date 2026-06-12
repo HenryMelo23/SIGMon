@@ -1,0 +1,14 @@
+<header class="topbar">
+  <div>
+    <span class="muted">{% block page_subtitle %}Universidade de Brasília — Departamento de Ciência da Computação{% endblock %}</span>
+    <h1>{% block page_heading %}SIGMon{% endblock %}</h1>
+  </div>
+  <div class="user-box">
+    <div class="avatar">{{ current_user.nome[:1] }}</div>
+    <div>
+      <strong>{{ current_user.nome }}</strong>
+      <small><span class="role-pill">{{ role_labels[current_user.papel] }}</span></small>
+    </div>
+    <a class="btn btn-outline" href="{{ url_for('auth.logout') }}">Sair</a>
+  </div>
+</header>

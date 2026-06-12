@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Sessões | SIGMon{% endblock %}
+{% block page_heading %}Sessões de tutoria{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header"><h2>Sessões</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Estudante</th><th>Slot</th><th>Assunto</th><th>Observações</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody>
+      {% for s in sessoes %}
+      <tr>
+        <td>{{ get_usuario(s.id_estudante).nome }}</td>
+        <td>#{{ s.id_slot }}</td>
+        <td>{{ s.assunto }}</td>
+        <td>{{ s.observacoes }}</td>
+        <td>{% set status = "Realizada" if s.realizada else "Pendente" %}{% include "partials/status_badge.html" %}</td>
+        <td class="actions">
+          {% if current_user.papel in ["MONITOR", "PROFESSOR"] and not s.realizada %}
+          <form method="post" action="{{ url_for('sessoes.realizar', id=s.id_sessao) }}"><button class="btn btn-success">Marcar realizada</button></form>
+          {% endif %}
+          {% if current_user.papel == "ESTUDANTE" and s.realizada %}
+          <a class="btn btn-outline" href="{{ url_for('avaliacoes.nova', id_sessao=s.id_sessao) }}">Avaliar</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+        {% set colspan = 6 %}{% include "partials/table_empty.html" %}
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

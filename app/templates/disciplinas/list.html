@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Disciplinas | SIGMon{% endblock %}
+{% block page_heading %}Disciplinas{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header">
+    <h2>Disciplinas</h2>
+    <a class="btn btn-primary" href="{{ url_for('disciplinas.form') }}">Nova disciplina</a>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Código</th><th>Nome</th><th>Créditos</th><th>Departamento</th><th>Ações</th></tr></thead>
+      <tbody>
+      {% for disciplina in disciplinas %}
+      <tr>
+        <td>{{ disciplina.codigo }}</td>
+        <td>{{ disciplina.nome }}</td>
+        <td>{{ disciplina.creditos }}</td>
+        <td>CIC</td>
+        <td class="actions">
+          <a class="btn btn-outline" href="{{ url_for('disciplinas.form', id=disciplina.id_disciplina) }}">Editar</a>
+          <form data-confirm="Remover esta disciplina?" method="post" action="{{ url_for('disciplinas.remover', id=disciplina.id_disciplina) }}">
+            <button class="btn btn-danger">Remover</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+        {% set colspan = 5 %}{% include "partials/table_empty.html" %}
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

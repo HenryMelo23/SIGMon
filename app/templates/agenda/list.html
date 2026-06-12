@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Agenda | SIGMon{% endblock %}
+{% block page_heading %}Agenda{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header">
+    <h2>Horários de atendimento</h2>
+    {% if current_user.papel == "MONITOR" %}<a class="btn btn-primary" href="{{ url_for('agenda.novo') }}">Novo horário</a>{% endif %}
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Data</th><th>Horário</th><th>Local</th><th>Modalidade</th><th>Status</th><th>Reserva</th></tr></thead>
+      <tbody>
+      {% for slot in slots %}
+      <tr>
+        <td>{{ slot.data_slot }}</td>
+        <td>{{ slot.hora_inicio }}-{{ slot.hora_fim }}</td>
+        <td>{{ slot.local_atendimento }}</td>
+        <td>{{ slot.modalidade }}</td>
+        <td>{% set status = "Reservado" if slot.reservado else "Disponível" %}{% include "partials/status_badge.html" %}</td>
+        <td>
+          {% if current_user.papel == "ESTUDANTE" and not slot.reservado %}
+          <form class="actions" method="post" action="{{ url_for('agenda.reservar', id=slot.id_slot) }}">
+            <input name="assunto" placeholder="Assunto do atendimento" required>
+            <button class="btn btn-primary">Reservar</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+        {% set colspan = 6 %}{% include "partials/table_empty.html" %}
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Edital | SIGMon{% endblock %}
+{% block page_heading %}{{ "Editar" if edital else "Novo" }} edital{% endblock %}
+{% block content %}
+<form class="panel form-grid" method="post">
+  <label>Departamento
+    <select name="id_departamento">{% for d in departamentos %}<option value="{{ d.id_departamento }}" {% if edital and edital.id_departamento == d.id_departamento %}selected{% endif %}>{{ d.sigla }}</option>{% endfor %}</select>
+  </label>
+  <label>Título <input name="titulo" value="{{ edital.titulo if edital else '' }}" required></label>
+  <label>Data início <input type="date" name="data_inicio" value="{{ edital.data_inicio if edital else '' }}" required></label>
+  <label>Data fim <input type="date" name="data_fim" value="{{ edital.data_fim if edital else '' }}" required></label>
+  <label>Quantidade de vagas <input type="number" name="quantidade_vagas" value="{{ edital.quantidade_vagas if edital else 1 }}" min="1" required></label>
+  <label>Nota mínima <input type="number" name="nota_minima" value="{{ edital.nota_minima if edital else 7.0 }}" min="0" max="10" step="0.1" required></label>
+  <label class="full">Descrição <textarea name="descricao" required>{{ edital.descricao if edital else '' }}</textarea></label>
+  <div class="actions full">
+    <button class="btn btn-primary">Salvar</button>
+    <a class="btn btn-outline" href="{{ url_for('editais.index') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

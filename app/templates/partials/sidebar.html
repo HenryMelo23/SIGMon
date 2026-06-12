@@ -1,0 +1,39 @@
+<aside class="sidebar">
+  <div class="brand">
+    <span class="brand-mark">Σ</span>
+    <div>
+      <strong>SIGMon</strong>
+      <small>Monitoria CIC/UnB</small>
+    </div>
+  </div>
+  <div class="sidebar-section-label">Navegação</div>
+  <nav class="nav">
+    {% for label, endpoint, roles in menu_items %}
+      {% set active = request.endpoint == endpoint or request.endpoint.split(".")[0] == endpoint.split(".")[0] %}
+      <a href="{{ url_for(endpoint) }}" class="nav-link {% if active %}active{% endif %}">
+        <span class="nav-icon">
+          {% if label == "Dashboard" %}◆
+          {% elif label == "Usuários" %}◉
+          {% elif label == "Departamentos" %}▣
+          {% elif label == "Disciplinas" %}▤
+          {% elif label == "Turmas" %}▦
+          {% elif label == "Editais" %}◇
+          {% elif label == "Candidaturas" or label == "Minhas candidaturas" %}◌
+          {% elif label == "Alocações" %}▰
+          {% elif label == "Agenda" %}◷
+          {% elif label == "Sessões" %}◍
+          {% elif label == "Frequências" %}✓
+          {% elif label == "Avaliações" %}★
+          {% elif label == "Financeiro" %}$
+          {% else %}•
+          {% endif %}
+        </span>
+        <span>{{ label }}</span>
+      </a>
+    {% endfor %}
+  </nav>
+  <div class="sidebar-footer">
+    <span>Ambiente demonstrativo</span>
+    <strong>{{ role_labels[current_user.papel] }}</strong>
+  </div>
+</aside>

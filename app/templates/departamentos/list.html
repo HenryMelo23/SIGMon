@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Departamentos | SIGMon{% endblock %}
+{% block page_heading %}Departamentos{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header">
+    <h2>Departamentos</h2>
+    <a class="btn btn-primary" href="{{ url_for('departamentos.form') }}">Novo departamento</a>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Sigla</th><th>Nome</th><th>E-mail</th><th>Ações</th></tr></thead>
+      <tbody>
+      {% for departamento in departamentos %}
+      <tr>
+        <td>{{ departamento.sigla }}</td>
+        <td>{{ departamento.nome }}</td>
+        <td>{{ departamento.email }}</td>
+        <td class="actions">
+          <a class="btn btn-outline" href="{{ url_for('departamentos.form', id=departamento.id_departamento) }}">Editar</a>
+          <form data-confirm="Remover este departamento?" method="post" action="{{ url_for('departamentos.remover', id=departamento.id_departamento) }}">
+            <button class="btn btn-danger">Remover</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+        {% set colspan = 4 %}{% include "partials/table_empty.html" %}
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

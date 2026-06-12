@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Edital | SIGMon{% endblock %}
+{% block page_heading %}Detalhes do edital{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header">
+    <h2>{{ edital.titulo }}</h2>
+    {% set status = "Aberto" if aberto else "Encerrado" %}{% include "partials/status_badge.html" %}
+  </div>
+  <p>{{ edital.descricao }}</p>
+  <div class="grid metrics">
+    {% set label = "Período" %}{% set value = edital.data_inicio ~ " a " ~ edital.data_fim %}{% include "partials/card.html" %}
+    {% set label = "Vagas" %}{% set value = edital.quantidade_vagas %}{% include "partials/card.html" %}
+    {% set label = "Nota mínima" %}{% set value = "%.1f"|format(edital.nota_minima) %}{% include "partials/card.html" %}
+  </div>
+  {% if current_user.papel == "ESTUDANTE" and aberto %}
+  <form class="form-grid" method="post" action="{{ url_for('editais.candidatar', id=edital.id_edital) }}">
+    <label>IRA <input name="ira" type="number" min="0" max="5" step="0.01" required></label>
+    <label>Nota na disciplina <input name="nota_disciplina" type="number" min="0" max="10" step="0.1" required></label>
+    <div class="actions full"><button class="btn btn-primary">Candidatar-me</button></div>
+  </form>
+  {% endif %}
+</section>
+{% endblock %}

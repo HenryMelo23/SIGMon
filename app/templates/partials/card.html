@@ -1,0 +1,11 @@
+<article class="metric-card">
+  <div class="metric-icon">{{ icon|default("◆") }}</div>
+  <div>
+    <span>{{ label }}</span>
+    <strong>{{ value }}</strong>
+    {% if description %}<small>{{ description }}</small>{% endif %}
+  </div>
+  {% if action_url and action_label %}
+    <a class="metric-link" href="{{ action_url }}">{{ action_label }}</a>
+  {% endif %}
+</article>

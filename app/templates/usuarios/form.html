@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Usuário | SIGMon{% endblock %}
+{% block page_heading %}{{ "Editar" if usuario else "Novo" }} usuário{% endblock %}
+{% block content %}
+<form class="panel form-grid" method="post">
+  <label>Nome <input name="nome" value="{{ usuario.nome if usuario else '' }}" required></label>
+  <label>E-mail <input type="email" name="email" value="{{ usuario.email if usuario else '' }}" required></label>
+  <label>Matrícula <input name="matricula" value="{{ usuario.matricula if usuario else '' }}" required></label>
+  <label>Papel
+    <select name="papel">
+      {% for key, label in role_labels.items() %}
+      <option value="{{ key }}" {% if usuario and usuario.papel == key %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Departamento
+    <select name="id_departamento">
+      {% for departamento in departamentos %}
+      <option value="{{ departamento.id_departamento }}" {% if usuario and usuario.id_departamento == departamento.id_departamento %}selected{% endif %}>{{ departamento.sigla }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Senha simulada <input name="senha_hash" value="{{ usuario.senha_hash if usuario else '123456' }}"></label>
+  <label class="full"><input type="checkbox" name="ativo" {% if not usuario or usuario.ativo %}checked{% endif %}> Usuário ativo</label>
+  <div class="actions full">
+    <button class="btn btn-primary" type="submit">Salvar</button>
+    <a class="btn btn-outline" href="{{ url_for('usuarios.index') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

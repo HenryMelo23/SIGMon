@@ -1,0 +1,16 @@
+{% set s = status|string %}
+{% set key = s|lower|replace('_', '-')|replace(' ', '-') %}
+{% if key in ["aprovada", "ativa", "validado", "disponível", "disponivel", "realizada", "sim", "aberto", "ativo"] %}
+  {% set badge_class = "badge-success" %}
+{% elif key in ["em-analise", "pendente", "reservado", "suspensa", "inscrita"] %}
+  {% set badge_class = "badge-warning" if key != "inscrita" else "badge-info" %}
+{% elif key in ["reprovada", "não", "nao", "inativo"] %}
+  {% set badge_class = "badge-danger" %}
+{% elif key in ["encerrado", "encerrada", "cancelada"] %}
+  {% set badge_class = "badge-muted" %}
+{% else %}
+  {% set badge_class = "badge-primary" %}
+{% endif %}
+<span class="badge {{ badge_class }} status-{{ key }}">
+  {{ s|replace('_', ' ')|title }}
+</span>

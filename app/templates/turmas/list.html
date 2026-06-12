@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Turmas | SIGMon{% endblock %}
+{% block page_heading %}Turmas{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header">
+    <h2>Turmas</h2>
+    {% if current_user.papel == "ADMINISTRADOR" %}<a class="btn btn-primary" href="{{ url_for('turmas.form') }}">Nova turma</a>{% endif %}
+  </div>
+  <form class="actions" method="get">
+    <input name="semestre" placeholder="Filtrar por semestre" value="{{ semestre or '' }}">
+    <button class="btn btn-outline">Filtrar</button>
+  </form>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Disciplina</th><th>Professor</th><th>Semestre</th><th>Turma</th><th>Tipo</th><th>Horário</th><th>Sala</th><th>Ações</th></tr></thead>
+      <tbody>
+      {% for turma in turmas %}
+      <tr>
+        <td>{{ get_disciplina(turma.id_disciplina).nome }}</td>
+        <td>{{ get_usuario(turma.id_professor).nome }}</td>
+        <td>{{ turma.semestre }}</td>
+        <td>{{ turma.codigo_turma }}</td>
+        <td>{{ turma.tipo_turma }}</td>
+        <td>{{ turma.horario }}</td>
+        <td>{{ turma.sala }}</td>
+        <td class="actions">
+          {% if current_user.papel == "ADMINISTRADOR" %}
+          <a class="btn btn-outline" href="{{ url_for('turmas.form', id=turma.id_turma) }}">Editar</a>
+          <form data-confirm="Remover esta turma?" method="post" action="{{ url_for('turmas.remover', id=turma.id_turma) }}"><button class="btn btn-danger">Remover</button></form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+        {% set colspan = 8 %}{% include "partials/table_empty.html" %}
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

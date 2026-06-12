@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | SIGMon{% endblock %}
+{% block page_heading %}Dashboard{% endblock %}
+{% block page_subtitle %}Visão operacional adaptada ao perfil {{ role_labels[current_user.papel] }}{% endblock %}
+{% block content %}
+<div class="grid metrics">
+  {% for item in stats %}
+    {% set label = item.label %}
+    {% set value = item.value %}
+    {% set icon = item.icon %}
+    {% set description = item.description %}
+    {% set action_url = url_for(item.endpoint) if item.endpoint else None %}
+    {% set action_label = item.action_label if item.endpoint else None %}
+    {% include "partials/card.html" %}
+  {% endfor %}
+</div>
+<section class="quick-actions">
+  <div class="panel-header">
+    <div>
+      <span class="section-kicker">Atalhos</span>
+      <h2>Ações rápidas</h2>
+    </div>
+  </div>
+  <div class="quick-grid">
+    {% for label, endpoint, description in quick_actions %}
+    <a class="quick-action" href="{{ url_for(endpoint) }}">
+      <span>→</span>
+      <strong>{{ label }}</strong>
+      <small>{{ description }}</small>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+<section class="panel">
+  <div class="panel-header">
+    <div>
+      <span class="section-kicker">Agenda</span>
+      <h2>Próximos horários de monitoria</h2>
+    </div>
+    <a class="btn btn-outline" href="{{ url_for('agenda.index') }}">Ver agenda</a>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Data</th><th>Horário</th><th>Local</th><th>Modalidade</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for slot in slots %}
+        <tr>
+          <td>{{ slot.data_slot }}</td>
+          <td>{{ slot.hora_inicio }}-{{ slot.hora_fim }}</td>
+          <td>{{ slot.local_atendimento }}</td>
+          <td>{{ slot.modalidade }}</td>
+          <td>{% set status = "Reservado" if slot.reservado else "Disponível" %}{% include "partials/status_badge.html" %}</td>
+        </tr>
+      {% else %}
+        {% set colspan = 5 %}{% include "partials/table_empty.html" %}
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

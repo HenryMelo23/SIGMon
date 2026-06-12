@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Turma | SIGMon{% endblock %}
+{% block page_heading %}{{ "Editar" if turma else "Nova" }} turma{% endblock %}
+{% block content %}
+<form class="panel form-grid" method="post">
+  <label>Disciplina
+    <select name="id_disciplina">{% for d in disciplinas %}<option value="{{ d.id_disciplina }}" {% if turma and turma.id_disciplina == d.id_disciplina %}selected{% endif %}>{{ d.codigo }} - {{ d.nome }}</option>{% endfor %}</select>
+  </label>
+  <label>Professor
+    <select name="id_professor">{% for p in professores %}<option value="{{ p.id_usuario }}" {% if turma and turma.id_professor == p.id_usuario %}selected{% endif %}>{{ p.nome }}</option>{% endfor %}</select>
+  </label>
+  <label>Semestre <input name="semestre" value="{{ turma.semestre if turma else '2026.1' }}" required></label>
+  <label>Código da turma <input name="codigo_turma" value="{{ turma.codigo_turma if turma else '' }}" required></label>
+  <label>Tipo
+    <select name="tipo_turma">
+      <option value="TEORICA" {% if turma and turma.tipo_turma == "TEORICA" %}selected{% endif %}>Teórica</option>
+      <option value="PRATICA" {% if turma and turma.tipo_turma == "PRATICA" %}selected{% endif %}>Prática</option>
+    </select>
+  </label>
+  <label>Horário <input name="horario" value="{{ turma.horario if turma else '' }}" required></label>
+  <label>Sala <input name="sala" value="{{ turma.sala if turma else '' }}" required></label>
+  <div class="actions full">
+    <button class="btn btn-primary">Salvar</button>
+    <a class="btn btn-outline" href="{{ url_for('turmas.index') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Login | SIGMon{% endblock %}
+{% block public_content %}
+<main class="login-page">
+  <div class="login-shape shape-one"></div>
+  <div class="login-shape shape-two"></div>
+  <section class="login-panel">
+    <div class="login-copy">
+      <span class="eyebrow">Universidade de Brasília — CIC</span>
+      <h1>SIGMon</h1>
+      <p>Gestão acadêmica de monitoria com rastreabilidade, segurança e eficiência.</p>
+      <div class="login-highlights">
+        <span>Controle por perfil</span>
+        <span>Auditoria simulada</span>
+        <span>Fluxo completo de monitoria</span>
+      </div>
+    </div>
+    <form class="login-card" method="post" action="{{ url_for('auth.do_login') }}">
+      <div class="login-card-header">
+        <span class="mini-mark">UnB</span>
+        <div>
+          <h2>Acesso institucional</h2>
+          <p>Entre com um usuário de demonstração ou credencial mockada.</p>
+        </div>
+      </div>
+      <label>E-mail
+        <input name="email" type="email" value="admin@unb.br" required>
+      </label>
+      <label>Senha
+        <input name="senha" type="password" value="123456" required>
+      </label>
+      <button class="btn btn-primary" type="submit">Entrar</button>
+      <div class="quick-login">
+        <span>Usuários de demonstração</span>
+        {% for usuario in usuarios_teste if usuario.ativo %}
+        <button type="button" data-login="{{ usuario.email }}" class="quick-chip">
+          <strong>{{ role_labels[usuario.papel] }}</strong>
+          <small>{{ usuario.email }}</small>
+        </button>
+        {% endfor %}
+      </div>
+    </form>
+  </section>
+</main>
+{% endblock %}

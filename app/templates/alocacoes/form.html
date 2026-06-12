@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Nova alocação | SIGMon{% endblock %}
+{% block page_heading %}Nova alocação{% endblock %}
+{% block content %}
+<form class="panel form-grid" method="post">
+  <label>Candidatura aprovada
+    <select name="id_candidatura">{% for c in candidaturas %}<option value="{{ c.id_candidatura }}">{{ get_usuario(c.id_estudante).nome }} - {{ get_edital(c.id_edital).titulo }}</option>{% endfor %}</select>
+  </label>
+  <label>Monitor
+    <select name="id_monitor">{% for m in monitores %}<option value="{{ m.id_usuario }}">{{ m.nome }}</option>{% endfor %}</select>
+  </label>
+  <label>Disciplina
+    <select name="id_disciplina">{% for d in disciplinas %}<option value="{{ d.id_disciplina }}">{{ d.nome }}</option>{% endfor %}</select>
+  </label>
+  <label>Turma
+    <select name="id_turma">{% for t in turmas %}<option value="{{ t.id_turma }}">{{ get_disciplina(t.id_disciplina).codigo }} {{ t.codigo_turma }}</option>{% endfor %}</select>
+  </label>
+  <label>Professor
+    <select name="id_professor">{% for p in professores %}<option value="{{ p.id_usuario }}">{{ p.nome }}</option>{% endfor %}</select>
+  </label>
+  <label>Carga semanal <input type="number" name="carga_horaria_semanal" value="12" required></label>
+  <label>Data início <input type="date" name="data_inicio" required></label>
+  <label>Data fim <input type="date" name="data_fim" required></label>
+  <input type="hidden" name="status" value="ATIVA">
+  <div class="actions full">
+    <button class="btn btn-primary">Criar alocação</button>
+    <a class="btn btn-outline" href="{{ url_for('alocacoes.index') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

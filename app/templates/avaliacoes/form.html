@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Nova avaliação | SIGMon{% endblock %}
+{% block page_heading %}Avaliar sessão{% endblock %}
+{% block content %}
+<form class="panel form-grid" method="post">
+  <label>Nota
+    <select name="nota">
+      {% for n in [5,4,3,2,1] %}<option value="{{ n }}">{{ n }}</option>{% endfor %}
+    </select>
+  </label>
+  <label class="full">Comentário <textarea name="comentario" required></textarea></label>
+  <div class="actions full">
+    <button class="btn btn-primary">Enviar avaliação</button>
+    <a class="btn btn-outline" href="{{ url_for('sessoes.index') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

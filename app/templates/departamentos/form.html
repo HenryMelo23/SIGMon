@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Departamento | SIGMon{% endblock %}
+{% block page_heading %}{{ "Editar" if departamento else "Novo" }} departamento{% endblock %}
+{% block content %}
+<form class="panel form-grid" method="post">
+  <label>Sigla <input name="sigla" value="{{ departamento.sigla if departamento else '' }}" required></label>
+  <label>E-mail <input type="email" name="email" value="{{ departamento.email if departamento else '' }}" required></label>
+  <label class="full">Nome <input name="nome" value="{{ departamento.nome if departamento else '' }}" required></label>
+  <div class="actions full">
+    <button class="btn btn-primary">Salvar</button>
+    <a class="btn btn-outline" href="{{ url_for('departamentos.index') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

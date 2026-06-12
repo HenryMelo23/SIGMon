@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Registrar frequência | SIGMon{% endblock %}
+{% block page_heading %}Registrar frequência{% endblock %}
+{% block content %}
+<form class="panel form-grid" method="post">
+  <label>Alocação
+    <select name="id_alocacao">{% for a in alocacoes %}<option value="{{ a.id_alocacao }}">{{ get_disciplina(a.id_disciplina).nome }} - {{ a.status }}</option>{% endfor %}</select>
+  </label>
+  <label>Data <input type="date" name="data_atividade" required></label>
+  <label>Horas <input type="number" step="0.5" min="0.5" name="horas" required></label>
+  <label class="full">Descrição <textarea name="descricao" required></textarea></label>
+  <div class="actions full">
+    <button class="btn btn-primary">Registrar</button>
+    <a class="btn btn-outline" href="{{ url_for('frequencias.index') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}
