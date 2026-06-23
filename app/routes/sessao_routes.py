@@ -1,5 +1,6 @@
 from flask import Blueprint, flash, redirect, render_template, url_for
 
+from app.repositories.agenda_repository import AgendaRepository
 from app.services.sessao_service import SessaoService
 from app.utils.decorators import current_user, login_required, roles_required
 
@@ -10,7 +11,8 @@ sessoes_bp = Blueprint("sessoes", __name__, url_prefix="/sessoes")
 @login_required
 @roles_required("ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR")
 def index():
-    return render_template("sessoes/list.html", sessoes=SessaoService().listar(current_user()))
+    slots = {slot.id_slot: slot for slot in AgendaRepository().list_all()}
+    return render_template("sessoes/list.html", sessoes=SessaoService().listar(current_user()), slots=slots)
 
 
 @sessoes_bp.post("/<int:id>/realizar")

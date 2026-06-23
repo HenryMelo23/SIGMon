@@ -3,6 +3,16 @@
 {% block page_heading %}Dashboard{% endblock %}
 {% block page_subtitle %}Visão operacional adaptada ao perfil {{ role_labels[current_user.papel] }}{% endblock %}
 {% block content %}
+{% if current_user.papel == "PROFESSOR" and frequencias_pendentes %}
+<section class="notice notice-warning">
+  <div>
+    <span class="section-kicker">Pendência</span>
+    <strong>Há {{ frequencias_pendentes|length }} registro{{ "s" if frequencias_pendentes|length != 1 else "" }} de frequência aguardando validação.</strong>
+    <small>Valide as atividades dos monitores antes de fechar o acompanhamento acadêmico.</small>
+  </div>
+  <a class="btn btn-warning" href="{{ url_for('frequencias.index') }}">Validar agora</a>
+</section>
+{% endif %}
 <div class="grid metrics">
   {% for item in stats %}
     {% set label = item.label %}
@@ -47,7 +57,13 @@
         <tr>
           <td>{{ slot.data_slot }}</td>
           <td>{{ slot.hora_inicio }}-{{ slot.hora_fim }}</td>
-          <td>{{ slot.local_atendimento }}</td>
+          <td>
+            {% if slot.local_atendimento.startswith("http://") or slot.local_atendimento.startswith("https://") %}
+              <a class="table-link" href="{{ slot.local_atendimento }}" target="_blank" rel="noopener">Abrir link</a>
+            {% else %}
+              {{ slot.local_atendimento }}
+            {% endif %}
+          </td>
           <td>{{ slot.modalidade }}</td>
           <td>{% set status = "Reservado" if slot.reservado else "Disponível" %}{% include "partials/status_badge.html" %}</td>
         </tr>

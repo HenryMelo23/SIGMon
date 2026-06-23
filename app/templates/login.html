@@ -30,6 +30,7 @@
         <input name="senha" type="password" value="123456" required>
       </label>
       <button class="btn btn-primary" type="submit">Entrar</button>
+      <a class="btn btn-outline" href="{{ url_for('auth.cadastro') }}">Criar cadastro</a>
       <div class="quick-login">
         <span>Usuários de demonstração</span>
         {% for usuario in usuarios_teste if usuario.ativo %}

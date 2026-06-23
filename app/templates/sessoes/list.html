@@ -6,17 +6,31 @@
   <div class="panel-header"><h2>Sessões</h2></div>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>Estudante</th><th>Slot</th><th>Assunto</th><th>Observações</th><th>Status</th><th>Ações</th></tr></thead>
+      <thead><tr><th>Solicitante</th><th>Atendimento</th><th>Assunto</th><th>Observações</th><th>Status</th><th>Ações</th></tr></thead>
       <tbody>
       {% for s in sessoes %}
       <tr>
         <td>{{ get_usuario(s.id_estudante).nome }}</td>
-        <td>#{{ s.id_slot }}</td>
+        <td>
+          {% set slot = slots.get(s.id_slot) %}
+          {% if slot %}
+            {{ slot.data_slot }} {{ slot.hora_inicio }}-{{ slot.hora_fim }}
+            {% if slot.local_atendimento.startswith("http://") or slot.local_atendimento.startswith("https://") %}
+              <br><a class="table-link" href="{{ slot.local_atendimento }}" target="_blank" rel="noopener">Abrir link</a>
+            {% else %}
+              <br><small class="table-note">{{ slot.local_atendimento }}</small>
+            {% endif %}
+          {% else %}
+            #{{ s.id_slot }}
+          {% endif %}
+        </td>
         <td>{{ s.assunto }}</td>
         <td>{{ s.observacoes }}</td>
         <td>{% set status = "Realizada" if s.realizada else "Pendente" %}{% include "partials/status_badge.html" %}</td>
         <td class="actions">
-          {% if current_user.papel in ["MONITOR", "PROFESSOR"] and not s.realizada %}
+          {% set alocacao = get_alocacao(slot.id_alocacao) if slot else none %}
+          {% set monitor_do_slot = current_user.papel == "MONITOR" and alocacao and alocacao.id_monitor == current_user.id_usuario %}
+          {% if (current_user.papel == "PROFESSOR" or monitor_do_slot) and not s.realizada %}
           <form method="post" action="{{ url_for('sessoes.realizar', id=s.id_sessao) }}"><button class="btn btn-success">Marcar realizada</button></form>
           {% endif %}
           {% if current_user.papel == "ESTUDANTE" and s.realizada %}

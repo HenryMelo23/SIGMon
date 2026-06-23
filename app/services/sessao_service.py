@@ -16,7 +16,11 @@ class SessaoService:
             alocacoes = AlocacaoRepository().list_by_monitor(usuario.id_usuario)
             alocacao_ids = {a.id_alocacao for a in alocacoes}
             slot_ids = {s.id_slot for s in self.agenda.list_all() if s.id_alocacao in alocacao_ids}
-            return [sessao for sessao in self.repo.list_all() if sessao.id_slot in slot_ids]
+            return [
+                sessao
+                for sessao in self.repo.list_all()
+                if sessao.id_slot in slot_ids or sessao.id_estudante == usuario.id_usuario
+            ]
         if usuario.papel == "PROFESSOR":
             alocacoes = AlocacaoRepository().list_by_professor(usuario.id_usuario)
             alocacao_ids = {a.id_alocacao for a in alocacoes}

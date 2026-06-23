@@ -21,6 +21,7 @@ def index():
     candidaturas = CandidaturaRepository().list_all()
     sessoes = SessaoRepository().list_all()
     frequencias = FrequenciaRepository().list_all()
+    frequencias_pendentes = [f for f in frequencias if not f.validado]
     avaliacoes = AvaliacaoRepository().list_all()
     stats = [
         {
@@ -57,7 +58,7 @@ def index():
         },
         {
             "label": "Frequências pendentes",
-            "value": sum(1 for f in frequencias if not f.validado),
+            "value": len(frequencias_pendentes),
             "description": "Registros aguardando validação",
             "icon": "✓",
             "endpoint": "frequencias.index" if usuario.papel in {"MONITOR", "PROFESSOR", "FINANCEIRO", "ADMINISTRADOR"} else None,
@@ -104,4 +105,5 @@ def index():
         quick_actions=quick_actions.get(usuario.papel, []),
         slots=AgendaRepository().list_all(),
         usuario=usuario,
+        frequencias_pendentes=frequencias_pendentes,
     )
