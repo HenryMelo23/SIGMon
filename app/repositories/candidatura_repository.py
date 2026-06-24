@@ -1,15 +1,10 @@
-from app.repositories.base_repository import BaseRepository
+from app.database.db import get_connection
+from app.models.candidatura import Candidatura
 
 
-class CandidaturaRepository(BaseRepository):
-    dataset_name = "candidaturas"
-    id_field = "id_candidatura"
-
-    def list_by_estudante(self, estudante_id):
-        return [c for c in self.items if c.id_estudante == int(estudante_id)]
-
-    def find_by_edital_estudante(self, edital_id, estudante_id):
-        return next(
-            (c for c in self.items if c.id_edital == int(edital_id) and c.id_estudante == int(estudante_id)),
-            None,
-        )
+class CandidaturaRepository:
+    def count_pendentes(self):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM candidaturas WHERE status IN ('INSCRITA', 'EM_ANALISE')")
+            return cursor.fetchone()[0]

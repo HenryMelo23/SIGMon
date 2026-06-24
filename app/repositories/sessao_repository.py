@@ -1,9 +1,11 @@
-from app.repositories.base_repository import BaseRepository
+from app.database.db import get_connection
+from app.models.sessao_tutoria import SessaoTutoria
 
 
-class SessaoRepository(BaseRepository):
-    dataset_name = "sessoes"
-    id_field = "id_sessao"
-
-    def list_by_estudante(self, estudante_id):
-        return [s for s in self.items if s.id_estudante == int(estudante_id)]
+class SessaoRepository:
+    def count_nao_realizadas(self):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM sessoes_tutoria WHERE realizada = FALSE")
+            return cursor.fetchone()[0]
+        

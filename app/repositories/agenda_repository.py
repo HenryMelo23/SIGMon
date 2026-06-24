@@ -1,9 +1,10 @@
-from app.repositories.base_repository import BaseRepository
+from app.database.db import get_connection
+from app.models.agenda_slot import AgendaSlot
 
-
-class AgendaRepository(BaseRepository):
-    dataset_name = "agenda"
-    id_field = "id_slot"
-
-    def list_disponiveis(self):
-        return [s for s in self.items if not s.reservado]
+class AgendaRepository:
+    def list_all(self):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM agenda_slots")
+            rows = cursor.fetchall()
+            return [AgendaSlot(*row) for row in rows]

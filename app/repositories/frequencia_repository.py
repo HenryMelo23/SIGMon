@@ -1,9 +1,9 @@
-from app.repositories.base_repository import BaseRepository
+from app.models.registro_frequencia import RegistroFrequencia
+from app.database.db import get_connection
 
-
-class FrequenciaRepository(BaseRepository):
-    dataset_name = "frequencias"
-    id_field = "id_frequencia"
-
-    def list_validadas(self):
-        return [f for f in self.items if f.validado]
+class FrequenciaRepository:
+    def count_nao_validadas(self):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM registros_frequencia WHERE validado = FALSE")
+            return cursor.fetchone()[0]

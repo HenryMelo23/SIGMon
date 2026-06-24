@@ -11,3 +11,9 @@ class AlocacaoRepository:
             if row:
                 return AlocacaoMonitor(*row)
             return None
+    
+    def count_ativos(self):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM alocacoes_monitores WHERE status = 'ATIVA'")
+            return cursor.fetchone()[0]

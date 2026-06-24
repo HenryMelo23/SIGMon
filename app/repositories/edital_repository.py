@@ -11,3 +11,9 @@ class EditalRepository:
             if row:
                 return Edital(*row)
             return None
+        
+    def count_abertos(self):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM editais WHERE data_fim >= CURRENT_DATE")
+            return cursor.fetchone()[0]
