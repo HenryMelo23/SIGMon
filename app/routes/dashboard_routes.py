@@ -17,7 +17,7 @@ dashboard_bp = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 @login_required
 def index():
     usuario = current_user()
-    editais = EditalRepository().list_all()
+    editais = EditalRepository().count_abertos()
     candidaturas = CandidaturaRepository().list_all()
     sessoes = SessaoRepository().list_all()
     frequencias = FrequenciaRepository().list_all()

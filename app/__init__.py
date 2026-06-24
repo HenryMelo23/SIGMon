@@ -19,7 +19,9 @@ def create_app() -> Flask:
     @app.context_processor
     def inject_current_user():
         user_id = session.get("user_id")
+        # usuario logado, executado uma vez para saber qm está na sessão
         usuario = UsuarioRepository().get_by_id(user_id) if user_id else None
+        # instancia para buscar usuarios pelo id depois nos templates
         usuarios = UsuarioRepository()
         disciplinas = DisciplinaRepository()
         turmas = TurmaRepository()

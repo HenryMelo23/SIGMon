@@ -1,6 +1,4 @@
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for
-
-from app.repositories.usuario_repository import UsuarioRepository
 from app.services.auth_service import AuthService
 from app.utils.validators import BusinessError
 
@@ -11,7 +9,7 @@ auth_bp = Blueprint("auth", __name__)
 def login():
     if session.get("user_id"):
         return redirect(url_for("dashboard.index"))
-    return render_template("login.html", usuarios_teste=UsuarioRepository().list_all())
+    return render_template("login.html")
 
 
 @auth_bp.post("/login")
