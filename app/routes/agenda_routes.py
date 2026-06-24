@@ -1,6 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app.repositories.alocacao_repository import AlocacaoRepository
+from app.repositories.sessao_repository import SessaoRepository
 from app.services.agenda_service import AgendaService
 from app.utils.decorators import current_user, login_required, roles_required
 from app.utils.validators import BusinessError
@@ -12,7 +13,20 @@ agenda_bp = Blueprint("agenda", __name__, url_prefix="/agenda")
 @login_required
 @roles_required("ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR")
 def index():
-    return render_template("agenda/list.html", slots=AgendaService().listar())
+    slots = AgendaService().listar()
+    sessoes_por_slot = {}
+    for sessao in SessaoRepository().list_all():
+        sessoes_por_slot[sessao.id_slot] = sessoes_por_slot.get(sessao.id_slot, 0) + 1
+    alocacoes_por_slot = {
+        slot.id_slot: AlocacaoRepository().get_by_id(slot.id_alocacao)
+        for slot in slots
+    }
+    return render_template(
+        "agenda/list.html",
+        slots=slots,
+        sessoes_por_slot=sessoes_por_slot,
+        alocacoes_por_slot=alocacoes_por_slot,
+    )
 
 
 @agenda_bp.route("/novo", methods=["GET", "POST"])
@@ -28,7 +42,7 @@ def novo():
 
 @agenda_bp.post("/<int:id>/reservar")
 @login_required
-@roles_required("ESTUDANTE")
+@roles_required("ESTUDANTE", "MONITOR")
 def reservar(id):
     try:
         AgendaService().reservar(id, current_user(), request.form)

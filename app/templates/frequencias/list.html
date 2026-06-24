@@ -2,6 +2,16 @@
 {% block title %}Frequências | SIGMon{% endblock %}
 {% block page_heading %}Frequências{% endblock %}
 {% block content %}
+{% set pendentes = frequencias | selectattr("validado", "equalto", false) | list %}
+{% if current_user.papel == "PROFESSOR" and pendentes %}
+<section class="notice notice-warning">
+  <div>
+    <span class="section-kicker">Validacao pendente</span>
+    <strong>{{ pendentes|length }} registro{{ "s" if pendentes|length != 1 else "" }} de monitor aguardando professor.</strong>
+    <small>Use o botao Validar na linha correspondente depois de conferir a atividade.</small>
+  </div>
+</section>
+{% endif %}
 <section class="panel">
   <div class="panel-header">
     <h2>Registros de frequência</h2>

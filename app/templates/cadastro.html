@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Cadastro | SIGMon{% endblock %}
+{% block public_content %}
+<main class="login-page">
+  <div class="login-shape shape-one"></div>
+  <div class="login-shape shape-two"></div>
+  <section class="login-panel register-panel">
+    <div class="login-copy">
+      <span class="eyebrow">Acesso ao SIGMon</span>
+      <h1>Cadastro</h1>
+      <p>Crie uma credencial de demonstracao para acompanhar editais, reservar atendimentos e usar os fluxos de monitoria.</p>
+      <div class="login-highlights">
+        <span>Estudante</span>
+        <span>Monitor</span>
+        <span>Agenda integrada</span>
+      </div>
+    </div>
+    <form class="login-card" method="post" action="{{ url_for('auth.cadastro') }}">
+      <div class="login-card-header">
+        <span class="mini-mark">UnB</span>
+        <div>
+          <h2>Novo cadastro</h2>
+          <p>Use dados simples para a demonstracao em memoria.</p>
+        </div>
+      </div>
+      <label>Nome
+        <input name="nome" required>
+      </label>
+      <label>E-mail
+        <input name="email" type="email" required>
+      </label>
+      <label>Matricula
+        <input name="matricula" required>
+      </label>
+      <label>Perfil
+        <select name="papel">
+          <option value="ESTUDANTE">Estudante</option>
+          <option value="MONITOR">Monitor</option>
+        </select>
+      </label>
+      <label>Senha
+        <input name="senha_hash" type="password" value="123456" required>
+      </label>
+      <div class="actions">
+        <button class="btn btn-primary" type="submit">Criar cadastro</button>
+        <a class="btn btn-outline" href="{{ url_for('auth.login') }}">Voltar ao login</a>
+      </div>
+    </form>
+  </section>
+</main>
+{% endblock %}
