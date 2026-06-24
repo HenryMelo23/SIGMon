@@ -8,10 +8,10 @@
     <div class="login-copy">
       <span class="eyebrow">Acesso ao SIGMon</span>
       <h1>Cadastro</h1>
-      <p>Crie uma credencial de demonstracao para acompanhar editais, reservar atendimentos e usar os fluxos de monitoria.</p>
+      <p>O cadastro público é exclusivo para estudantes. Professores e outros perfis devem solicitar acesso ao administrador do sistema.</p>
       <div class="login-highlights">
         <span>Estudante</span>
-        <span>Monitor</span>
+        <span>Editais</span>
         <span>Agenda integrada</span>
       </div>
     </div>
@@ -20,7 +20,7 @@
         <span class="mini-mark">UnB</span>
         <div>
           <h2>Novo cadastro</h2>
-          <p>Use dados simples para a demonstracao em memoria.</p>
+          <p>Preencha os dados para criar seu acesso como estudante.</p>
         </div>
       </div>
       <label>Nome
@@ -32,14 +32,8 @@
       <label>Matricula
         <input name="matricula" required>
       </label>
-      <label>Perfil
-        <select name="papel">
-          <option value="ESTUDANTE">Estudante</option>
-          <option value="MONITOR">Monitor</option>
-        </select>
-      </label>
       <label>Senha
-        <input name="senha_hash" type="password" value="123456" required>
+        <input name="senha_hash" type="password" required>
       </label>
       <div class="actions">
         <button class="btn btn-primary" type="submit">Criar cadastro</button>

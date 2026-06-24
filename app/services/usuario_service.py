@@ -19,10 +19,8 @@ class UsuarioService:
         usuario_existente = self.repo.find_by_email(email)
         if usuario_existente and usuario_existente.id_usuario != usuario_id_atual:
             raise BusinessError("Ja existe um usuario cadastrado com este e-mail.")
-        if matricula:
-            for usuario in self.repo.list_all():
-                if usuario.matricula == matricula and usuario.id_usuario != usuario_id_atual:
-                    raise BusinessError("Ja existe um usuario cadastrado com esta matricula.")
+        if matricula and self.repo.find_by_matricula(matricula):
+            raise BusinessError("Ja existe um usuario cadastrado com esta matricula.")
         payload = {
             "id_departamento": int(data.get("id_departamento", 1)),
             "nome": data.get("nome", ""),
@@ -38,7 +36,7 @@ class UsuarioService:
     def cadastrar_publico(self, data):
         payload = dict(data)
         payload["id_departamento"] = 1
-        payload["papel"] = data.get("papel") if data.get("papel") in {"ESTUDANTE", "MONITOR"} else "ESTUDANTE"
+        payload["papel"] = "ESTUDANTE"
         payload["ativo"] = "on"
         return self.salvar(payload)
 

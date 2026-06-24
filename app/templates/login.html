@@ -20,7 +20,7 @@
         <span class="mini-mark">UnB</span>
         <div>
           <h2>Acesso institucional</h2>
-          <p>Entre com um usuário de demonstração ou credencial mockada.</p>
+          <p>Entre com seu e-mail e senha institucionais.</p>
         </div>
       </div>
       <label>E-mail
@@ -31,15 +31,6 @@
       </label>
       <button class="btn btn-primary" type="submit">Entrar</button>
       <a class="btn btn-outline" href="{{ url_for('auth.cadastro') }}">Criar cadastro</a>
-      <div class="quick-login">
-        <span>Usuários de demonstração</span>
-        {% for usuario in usuarios_teste if usuario.ativo %}
-        <button type="button" data-login="{{ usuario.email }}" class="quick-chip">
-          <strong>{{ role_labels[usuario.papel] }}</strong>
-          <small>{{ usuario.email }}</small>
-        </button>
-        {% endfor %}
-      </div>
     </form>
   </section>
 </main>
