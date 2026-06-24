@@ -7,7 +7,7 @@
 <section class="notice notice-warning">
   <div>
     <span class="section-kicker">Pendência</span>
-    <strong>Há {{ frequencias_pendentes|length }} registro{{ "s" if frequencias_pendentes|length != 1 else "" }} de frequência aguardando validação.</strong>
+    <strong>Há {{ frequencias_pendentes}} registro(s) de frequência aguardando validação.</strong>
     <small>Valide as atividades dos monitores antes de fechar o acompanhamento acadêmico.</small>
   </div>
   <a class="btn btn-warning" href="{{ url_for('frequencias.index') }}">Validar agora</a>

@@ -7,7 +7,6 @@ from app.repositories.candidatura_repository import CandidaturaRepository
 from app.repositories.edital_repository import EditalRepository
 from app.repositories.frequencia_repository import FrequenciaRepository
 from app.repositories.sessao_repository import SessaoRepository
-from app.services.edital_service import EditalService
 from app.utils.decorators import current_user, login_required
 
 dashboard_bp = Blueprint("dashboard", __name__, url_prefix="/dashboard")
@@ -17,16 +16,16 @@ dashboard_bp = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 @login_required
 def index():
     usuario = current_user()
-    editais = EditalRepository().count_abertos()
-    candidaturas = CandidaturaRepository().list_all()
-    sessoes = SessaoRepository().list_all()
-    frequencias = FrequenciaRepository().list_all()
-    frequencias_pendentes = [f for f in frequencias if not f.validado]
-    avaliacoes = AvaliacaoRepository().list_all()
+    editais_abertos = EditalRepository().count_abertos()
+    candidaturas_pendentes = CandidaturaRepository().count_pendentes()
+    alocacoes_ativas = AlocacaoRepository().count_ativos()
+    sessoes_agendadas = SessaoRepository().count_nao_realizadas()
+    frequencias_pendentes = FrequenciaRepository().count_nao_validadas()
+    total_avaliacoes = AvaliacaoRepository().count_all()
     stats = [
         {
             "label": "Editais abertos",
-            "value": sum(1 for e in editais if EditalService().esta_aberto(e)),
+            "value": editais_abertos,
             "description": "Processos seletivos disponíveis",
             "icon": "◇",
             "endpoint": "editais.index",
@@ -34,7 +33,7 @@ def index():
         },
         {
             "label": "Candidaturas pendentes",
-            "value": sum(1 for c in candidaturas if c.status in {"INSCRITA", "EM_ANALISE"}),
+            "value": candidaturas_pendentes,
             "description": "Aguardando análise acadêmica",
             "icon": "◌",
             "endpoint": "candidaturas.index" if usuario.papel in {"PROFESSOR", "ADMINISTRADOR"} else None,
@@ -42,7 +41,7 @@ def index():
         },
         {
             "label": "Monitores ativos",
-            "value": sum(1 for a in AlocacaoRepository().list_all() if a.status == "ATIVA"),
+            "value": alocacoes_ativas,
             "description": "Alocações em andamento",
             "icon": "▰",
             "endpoint": "alocacoes.index" if usuario.papel in {"MONITOR", "PROFESSOR", "ADMINISTRADOR"} else None,
@@ -50,7 +49,7 @@ def index():
         },
         {
             "label": "Sessões agendadas",
-            "value": sum(1 for s in sessoes if not s.realizada),
+            "value": sessoes_agendadas,
             "description": "Atendimentos a realizar",
             "icon": "◍",
             "endpoint": "sessoes.index" if usuario.papel in {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR"} else None,
@@ -58,7 +57,7 @@ def index():
         },
         {
             "label": "Frequências pendentes",
-            "value": len(frequencias_pendentes),
+            "value": frequencias_pendentes,
             "description": "Registros aguardando validação",
             "icon": "✓",
             "endpoint": "frequencias.index" if usuario.papel in {"MONITOR", "PROFESSOR", "FINANCEIRO", "ADMINISTRADOR"} else None,
@@ -66,7 +65,7 @@ def index():
         },
         {
             "label": "Avaliações recebidas",
-            "value": len(avaliacoes),
+            "value": total_avaliacoes,
             "description": "Feedbacks de tutorias",
             "icon": "★",
             "endpoint": "avaliacoes.index" if usuario.papel in {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR"} else None,
