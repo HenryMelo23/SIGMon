@@ -1,12 +1,13 @@
-from app.repositories.base_repository import BaseRepository
+from app.database.db import get_connection
+from app.models.alocacao import AlocacaoMonitor
 
 
-class AlocacaoRepository(BaseRepository):
-    dataset_name = "alocacoes"
-    id_field = "id_alocacao"
-
-    def list_by_monitor(self, monitor_id):
-        return [a for a in self.items if a.id_monitor == int(monitor_id)]
-
-    def list_by_professor(self, professor_id):
-        return [a for a in self.items if a.id_professor == int(professor_id)]
+class AlocacaoRepository:
+    def get_by_id(self, id):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM alocacoes_monitores WHERE id_alocacao= %s", (id,))
+            row = cursor.fetchone()
+            if row:
+                return AlocacaoMonitor(*row)
+            return None

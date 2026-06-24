@@ -1,12 +1,22 @@
-from app.repositories.base_repository import BaseRepository
+from app.database.db import get_connection
+from app.models.usuario import Usuario
 
 
-class UsuarioRepository(BaseRepository):
-    dataset_name = "usuarios"
-    id_field = "id_usuario"
-
+class UsuarioRepository:
     def find_by_email(self, email):
-        return next((u for u in self.items if u.email.lower() == email.lower()), None)
-
-    def list_by_role(self, papel):
-        return [u for u in self.items if u.papel == papel]
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM usuarios WHERE LOWER(email) = LOWER(%s)", (email,))
+            row = cursor.fetchone()
+            if row is None:
+                return None
+            return Usuario(*row)
+    
+    def get_by_id(self, id):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM usuarios WHERE id_usuario = %s", (id,))
+            row = cursor.fetchone()
+            if row is None:
+                return None
+            return Usuario(*row)
