@@ -20,8 +20,7 @@ class HorarioService:
         payload = {
             "codigo": codigo,
             "descricao": data.get("descricao", "").strip(),
-            "dias": data.get("dias", "").strip(),
-            "turno": data.get("turno", "").strip().upper(),
+"turno": data.get("turno", "").strip().upper(),
             "ativo": data.get("ativo") == "on",
         }
         return self.repo.update(horario_id, payload) if horario_id else self.repo.create(payload)

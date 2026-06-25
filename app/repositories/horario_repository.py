@@ -28,13 +28,12 @@ class HorarioRepository:
         with get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                """INSERT INTO horarios (codigo, descricao, dias, turno, ativo)
-                   VALUES (%s, %s, %s, %s, %s)
+                """INSERT INTO horarios (codigo, descricao, turno, ativo)
+                   VALUES (%s, %s, %s, %s)
                    RETURNING *""",
                 (
                     payload["codigo"],
                     payload["descricao"],
-                    payload["dias"],
                     payload["turno"],
                     payload["ativo"],
                 )
@@ -48,13 +47,12 @@ class HorarioRepository:
             cursor = conn.cursor()
             cursor.execute(
                 """UPDATE horarios
-                   SET codigo=%s, descricao=%s, dias=%s, turno=%s, ativo=%s
+                   SET codigo=%s, descricao=%s, turno=%s, ativo=%s
                    WHERE id_horario=%s
                    RETURNING *""",
                 (
                     payload["codigo"],
                     payload["descricao"],
-                    payload["dias"],
                     payload["turno"],
                     payload["ativo"],
                     id_horario,

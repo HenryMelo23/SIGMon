@@ -13,10 +13,7 @@
       <option value="N" {% if horario and horario.turno == "N" %}selected{% endif %}>Noite</option>
     </select>
   </label>
-  <label>Dias da semana
-    <input name="dias" placeholder="Ex: 246" value="{{ horario.dias if horario else '' }}" required>
-  </label>
-  <label class="full">Descrição
+<label class="full">Descrição
     <input name="descricao" placeholder="Ex: Seg/Qua/Sex 10h-11h50" value="{{ horario.descricao if horario else '' }}" required>
   </label>
   <label class="full">
