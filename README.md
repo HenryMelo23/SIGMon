@@ -1,65 +1,106 @@
 # SIGMon - Sistema Integrado de Gestão de Monitoria
 
-Aplicação web institucional para gestão de monitoria acadêmica do Departamento de Ciência da Computação da Universidade de Brasília.
+Aplicação web para gestão de monitoria acadêmica desenvolvida para o Departamento de Ciência da Computação da Universidade de Brasília.
 
-O projeto usa Flask com templates Jinja2, CSS e JavaScript simples. Não há React, Angular, Vue nem SPA. A persistência atual é mockada em memória, com repositories desacoplados para facilitar a futura troca por PostgreSQL.
+**Integrantes:** Luis Henrique Bessa de Melo e Carlos Victor Albuquerque Oliveira
 
 ## Stack
 
-- Python
-- Flask
+- Python + Flask
 - Jinja2 Templates
+- PostgreSQL + psycopg2 (sem ORM)
 - HTML, CSS e JavaScript simples
-- Blueprints
-- Services
-- Repositories
-- Models com dataclasses
-- Mocks em memória
 
-## Interface visual
+## Pré-requisitos
 
-A interface foi estilizada com identidade visual inspirada na UnB/CIC, usando verde institucional, azul profundo, branco, cinzas claros e detalhes dourados. O layout mantém uma proposta administrativa e acadêmica, com sidebar por perfil, header institucional, cards de dashboard, tabelas responsivas, badges de status e mensagens flash em formato de toast.
+- Python 3.10+
+- PostgreSQL 14+
 
 ## Como rodar
 
+### 1. Clone o repositório e crie o ambiente virtual
+
 ```bash
+git clone <url-do-repositorio>
+cd SIGMon
 python -m venv venv
 ```
 
-Windows:
+Ative o ambiente virtual:
 
 ```bash
+# Linux/Mac
+source venv/bin/activate
+
+# Windows
 venv\Scripts\activate
 ```
 
-Linux/Mac:
-
-```bash
-source venv/bin/activate
-```
-
-Depois:
+### 2. Instale as dependências
 
 ```bash
 pip install -r requirements.txt
+```
+
+### 3. Configure as variáveis de ambiente
+
+Copie o arquivo de exemplo e preencha com suas credenciais:
+
+```bash
+cp .env.example .env
+```
+
+Edite o `.env`:
+
+```env
+SECRET_KEY=qualquer-string-aqui-serve-para-desenvolvimento
+DATABASE_URL=postgresql://sigmon_user:senha@localhost:5432/sigmon
+```
+
+> O `SECRET_KEY` é usado pelo Flask para assinar os cookies de sessão. Em desenvolvimento qualquer valor funciona. Em produção use uma string longa e aleatória.
+
+### 4. Configure o banco de dados
+
+Crie o banco e o usuário no PostgreSQL:
+
+```bash
+sudo -u postgres psql
+```
+
+```sql
+CREATE DATABASE sigmon;
+CREATE USER sigmon_user WITH PASSWORD 'senha';
+GRANT ALL PRIVILEGES ON DATABASE sigmon TO sigmon_user;
+\c sigmon
+GRANT ALL ON SCHEMA public TO sigmon_user;
+\q
+```
+
+Execute os scripts SQL:
+
+```bash
+sudo cp sql/sigmon_create.sql /tmp/
+sudo cp sql/sigmon_seeds.sql /tmp/
+sudo -u postgres psql -d sigmon -f /tmp/sigmon_create.sql
+sudo -u postgres psql -d sigmon -f /tmp/sigmon_seeds.sql
+sudo -u postgres psql -d sigmon -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO sigmon_user; GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO sigmon_user;"
+```
+
+### 5. Rode a aplicação
+
+```bash
 python run.py
 ```
 
-Acesse:
+Acesse em: `http://localhost:5000`
 
-```txt
-http://localhost:5000
-```
-
-Se a porta 5000 já estiver ocupada, rode em outra porta:
+Se a porta estiver ocupada:
 
 ```bash
+# Linux/Mac
 PORT=5001 python run.py
-```
 
-No PowerShell:
-
-```powershell
+# Windows PowerShell
 $env:PORT=5001; python run.py
 ```
 
@@ -75,66 +116,33 @@ Todos usam a senha `123456`.
 | Monitor | monitor@unb.br |
 | Financeiro | financeiro@unb.br |
 
-Há também um usuário inativo (`inativo@unb.br`) para demonstrar bloqueio de login.
+## Estrutura do projeto
 
-## Estrutura
-
-```txt
+```
 app/
-  models/          Entidades do domínio
-  repositories/    Persistência mockada, substituível por PostgreSQL
+  models/          Entidades do domínio (dataclasses)
+  repositories/    Acesso ao banco de dados (SQL puro)
   services/        Regras de negócio
   routes/          Blueprints Flask
   templates/       Telas Jinja2
   static/          CSS e JS
-  mocks/           Dados simulados
-  utils/           Permissões, decorators, validações e auditoria
-sql/               Planejamento PostgreSQL
+  database/        Conexão e pool PostgreSQL
+  utils/           Permissões, decorators e validações
+sql/
+  sigmon_create.sql     Criação das tabelas
+  sigmon_seeds.sql      Dados iniciais
+  sigmon_views.sql      Views
+  sigmon_triggers.sql   Triggers
+  sigmon_procedures.sql Procedures
 run.py             Entrada da aplicação
 ```
 
 ## Perfis e permissões
 
-- Estudante: editais abertos, candidatura, agenda, sessões e avaliações.
-- Monitor: alocação própria, criação de slots, sessões, frequência e avaliações recebidas.
-- Professor: turmas, candidaturas, alocações, validação de frequência e relatórios.
-- Administrador: cadastros, editais, candidaturas, alocações e visão geral.
-- Financeiro: monitores ativos, dados bancários e frequências validadas.
-
-Rotas sensíveis usam decorators de login e papel. Acesso direto por URL sem permissão retorna 403.
-
-## Regras implementadas
-
-- Usuário inativo não faz login.
-- Estudante não se candidata duas vezes ao mesmo edital.
-- Candidatura só é permitida em edital aberto.
-- Candidatura nasce como `INSCRITA`.
-- Professor/administrador alteram status de candidatura.
-- Apenas candidatura `APROVADA` gera alocação.
-- Dados bancários são restritos a financeiro/administrador.
-- Slot reservado não pode ser reservado novamente.
-- Reserva de slot cria sessão de tutoria.
-- Frequência nasce não validada.
-- Apenas professor valida frequência.
-- Financeiro vê apenas frequências validadas.
-- Avaliação só é criada para sessão realizada.
-- Ações sensíveis registram auditoria simulada.
-
-## Mocks e futura persistência
-
-Os dados ficam em `app/mocks/mock_data.py`. Os repositories em `app/repositories/` são a fronteira de persistência. Para trocar por PostgreSQL, crie repositories concretos usando SQLAlchemy ou psycopg2 e preserve os métodos usados pelas services (`list_all`, `get_by_id`, `create`, `update`, `delete`).
-
-O módulo `app/database/postgres_placeholder.py` marca o ponto de inicialização futura para conexão, pool, migrations e ORM.
-
-## SQL planejado
-
-A pasta `sql/` inclui:
-
-- `estrutura_futura.sql`: tabelas, chaves, checks e índices.
-- `triggers_planejadas.sql`: validações e auditoria.
-- `views_planejadas.sql`: dashboards e visões financeiras.
-- `procedures_planejadas.sql`: aprovação, alocação, folha e validações em lote.
-
-## LGPD e auditoria
-
-O sistema separa dados bancários e restringe acesso por perfil. A função `registrar_auditoria(usuario_id, acao, entidade, detalhes)` simula trilha de auditoria para acesso financeiro, aprovação/alteração de candidaturas e validação de frequência.
+| Perfil | Acesso |
+|---|---|
+| Estudante | Editais abertos, candidaturas, agenda, sessões e avaliações |
+| Monitor | Alocação própria, agenda, sessões, frequência e avaliações |
+| Professor | Turmas, candidaturas, alocações e validação de frequência |
+| Administrador | Cadastros completos, editais, candidaturas e alocações |
+| Financeiro | Monitores ativos, dados bancários e frequências validadas |
