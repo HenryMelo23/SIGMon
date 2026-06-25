@@ -69,6 +69,12 @@ class DepartamentoRepository:
                 row = cursor.fetchone()
                 return Departamento(*row)
     
+    def tem_disciplinas(self, id_departamento):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM disciplinas WHERE id_departamento = %s", (id_departamento,))
+            return cursor.fetchone()[0] > 0
+
     def delete(self, id_departamento):
         with get_connection() as conn:
             cursor = conn.cursor()

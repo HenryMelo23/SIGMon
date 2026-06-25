@@ -29,4 +29,6 @@ class DepartamentoService:
         return self.repo.update(departamento_id, payload) if departamento_id else self.repo.create(payload)
 
     def remover(self, id):
+        if self.repo.tem_disciplinas(id):
+            raise BusinessError("Não é possível remover um departamento que possui disciplinas vinculadas.")
         return self.repo.delete(id)

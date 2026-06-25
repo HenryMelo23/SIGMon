@@ -34,6 +34,9 @@ def form(id=None):
 @login_required
 @roles_required("ADMINISTRADOR")
 def remover(id):
-    DepartamentoService().remover(id)
-    flash("Departamento removido.", "success")
+    try:
+        DepartamentoService().remover(id)
+        flash("Departamento removido.", "success")
+    except BusinessError as exc:
+        flash(str(exc), "danger")
     return redirect(url_for("departamentos.index"))
