@@ -16,8 +16,14 @@ class DisciplinaService:
         codigo_existente = self.repo.find_by_codigo(codigo)
         if codigo_existente and codigo_existente.id_disciplina != (int(id_disciplina) if id_disciplina else None):
             raise BusinessError("Já existe uma disciplina com este código.")
+        novo_departamento = data.get("id_departamento", "").strip()
+        if id_disciplina:
+            disciplina_atual = self.repo.get_by_id(id_disciplina)
+            if disciplina_atual and str(disciplina_atual.id_departamento) != str(novo_departamento):
+                if self.repo.tem_turmas(id_disciplina):
+                    raise BusinessError("Não é possível mudar o departamento de uma disciplina que possui turmas vinculadas.")
         payload = {
-              "id_departamento": data.get("id_departamento", "").strip(),
+              "id_departamento": novo_departamento,
               "codigo": codigo,
               "nome": data.get("nome", "").strip(),
               "creditos": data.get("creditos", "").strip(),
