@@ -1,6 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 from app.services.auth_service import AuthService
 from app.services.usuario_service import UsuarioService
+from app.repositories.departamento_repository import DepartamentoRepository
 from app.utils.validators import BusinessError
 
 auth_bp = Blueprint("auth", __name__)
@@ -37,7 +38,7 @@ def cadastro():
             return redirect(url_for("dashboard.index"))
         except BusinessError as exc:
             flash(str(exc), "danger")
-    return render_template("cadastro.html")
+    return render_template("cadastro.html", departamentos=DepartamentoRepository().list_all())
 
 
 @auth_bp.get("/logout")

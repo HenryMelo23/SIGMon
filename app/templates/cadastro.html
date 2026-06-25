@@ -32,6 +32,13 @@
       <label>Matricula
         <input name="matricula" required>
       </label>
+      <label>Departamento do Curso
+        <select name="id_departamento" required>
+          {% for dep in departamentos %}
+            <option value="{{ dep.id_departamento }}">{{ dep.nome}}</option>
+          {% endfor %}
+        </select>
+    </label>
       <label>Senha
         <input name="senha_hash" type="password" required>
       </label>

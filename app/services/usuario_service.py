@@ -34,7 +34,6 @@ class UsuarioService:
 
     def cadastrar_publico(self, data):
         payload = dict(data)
-        payload["id_departamento"] = 1
         payload["papel"] = "ESTUDANTE"
         payload["ativo"] = "on"
         return self.salvar(payload)
