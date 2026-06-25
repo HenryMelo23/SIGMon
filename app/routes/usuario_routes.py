@@ -21,35 +21,43 @@ def index():
 @login_required
 @roles_required("ADMINISTRADOR")
 def novo():
+    volta_papel = request.args.get("papel", "ESTUDANTE")
     if request.method == "POST":
+        volta_papel = request.form.get("volta_papel", "ESTUDANTE")
         try:
             UsuarioService().salvar(request.form)
             flash("Usuário criado com sucesso.", "success")
-            return redirect(url_for("usuarios.index"))
+            return redirect(url_for("usuarios.index", papel=volta_papel))
         except BusinessError as exc:
             flash(str(exc), "danger")
-    return render_template("usuarios/form.html", usuario=None, departamentos=DepartamentoRepository().list_all())
+    return render_template("usuarios/form.html", usuario=None, departamentos=DepartamentoRepository().list_all(), volta_papel=volta_papel)
 
 
 @usuarios_bp.route("/<int:id>/editar", methods=["GET", "POST"])
 @login_required
 @roles_required("ADMINISTRADOR")
 def editar(id):
+    volta_papel = request.args.get("papel", "ESTUDANTE")
     service = UsuarioService()
     if request.method == "POST":
+        volta_papel = request.form.get("volta_papel", "ESTUDANTE")
         try:
             service.salvar(request.form, id)
             flash("Usuário atualizado.", "success")
-            return redirect(url_for("usuarios.index"))
+            return redirect(url_for("usuarios.index", papel=volta_papel))
         except BusinessError as exc:
             flash(str(exc), "danger")
-    return render_template("usuarios/form.html", usuario=UsuarioRepository().get_by_id(id), departamentos=DepartamentoRepository().list_all())
+    return render_template("usuarios/form.html", usuario=UsuarioRepository().get_by_id(id), departamentos=DepartamentoRepository().list_all(), volta_papel=volta_papel)
 
 
 @usuarios_bp.post("/<int:id>/status")
 @login_required
 @roles_required("ADMINISTRADOR")
 def status(id):
-    UsuarioService().alternar_status(id)
-    flash("Status do usuário atualizado.", "success")
-    return redirect(url_for("usuarios.index"))
+    papel = request.form.get("papel", "ESTUDANTE")
+    try:
+        UsuarioService().alternar_status(id)
+        flash("Status do usuário atualizado.", "success")
+    except BusinessError as exc:
+        flash(str(exc), "danger")
+    return redirect(url_for("usuarios.index", papel=papel))

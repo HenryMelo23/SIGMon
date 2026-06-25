@@ -89,6 +89,32 @@ class UsuarioRepository:
             row = cursor.fetchone()
             return Usuario(*row)
     
+    def tem_turmas_ativas(self, id_professor):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM turmas WHERE id_professor = %s", (id_professor,))
+            return cursor.fetchone()[0] > 0
+
+    def tem_alocacoes_ativas(self, id_monitor):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT COUNT(*) FROM alocacoes_monitores WHERE id_monitor = %s AND status = 'ATIVA'",
+                (id_monitor,)
+            )
+            return cursor.fetchone()[0] > 0
+
+    def tem_turmas_outro_departamento(self, id_professor, id_departamento):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """SELECT COUNT(*) FROM turmas t
+                   JOIN disciplinas d ON t.id_disciplina = d.id_disciplina
+                   WHERE t.id_professor = %s AND d.id_departamento != %s""",
+                (id_professor, id_departamento)
+            )
+            return cursor.fetchone()[0] > 0
+
     def muda_status(self, usuario_id):
         with get_connection() as conn:
             cursor = conn.cursor()

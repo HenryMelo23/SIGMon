@@ -27,8 +27,9 @@
         <td>{{ role_labels[usuario.papel] }}</td>
         <td>{% set status = "Ativo" if usuario.ativo else "Inativo" %}{% include "partials/status_badge.html" %}</td>
         <td class="actions">
-          <a class="btn btn-outline" href="{{ url_for('usuarios.editar', id=usuario.id_usuario) }}">Editar</a>
+          <a class="btn btn-outline" href="{{ url_for('usuarios.editar', id=usuario.id_usuario, papel=papel) }}">Editar</a>
           <form method="post" action="{{ url_for('usuarios.status', id=usuario.id_usuario) }}">
+            <input type="hidden" name="papel" value="{{ papel }}">
             <button class="btn btn-warning" type="submit">Ativar/desativar</button>
           </form>
         </td>
