@@ -9,8 +9,7 @@ class UsuarioService:
         self.repo = UsuarioRepository()
 
     def listar(self, papel=None):
-        usuarios = self.repo.list_all()
-        return [u for u in usuarios if not papel or u.papel == papel]
+        return self.repo.list_by_papel(papel)
 
     def salvar(self, data, usuario_id=None):
         usuario_id_atual = int(usuario_id) if usuario_id else None
@@ -19,7 +18,7 @@ class UsuarioService:
         usuario_existente = self.repo.find_by_email(email)
         if usuario_existente and usuario_existente.id_usuario != usuario_id_atual:
             raise BusinessError("Ja existe um usuario cadastrado com este e-mail.")
-        if matricula and self.repo.find_by_matricula(matricula):
+        if matricula and self.repo.find_by_matricula(matricula, excluir_id=usuario_id_atual):
             raise BusinessError("Ja existe um usuario cadastrado com esta matricula.")
         payload = {
             "id_departamento": int(data.get("id_departamento", 1)),
@@ -41,7 +40,5 @@ class UsuarioService:
         return self.salvar(payload)
 
     def alternar_status(self, usuario_id):
-        usuario = self.repo.get_by_id(usuario_id)
-        if usuario:
-            usuario.ativo = not usuario.ativo
-        return usuario
+        return self.repo.muda_status(usuario_id)
+        

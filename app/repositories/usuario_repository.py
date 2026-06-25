@@ -21,14 +21,18 @@ class UsuarioRepository:
                 return None
             return Usuario(*row)
     
-    def find_by_matricula(self, matricula):
+    def find_by_matricula(self, matricula, excluir_id=None):
         with get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM usuarios WHERE matricula = %s", (matricula,))
+            if excluir_id:
+                cursor.execute(
+                  "SELECT * FROM usuarios WHERE matricula = %s AND id_usuario != %s",
+                  (matricula, excluir_id)
+              )
+            else:
+                cursor.execute("SELECT * FROM usuarios WHERE matricula = %s", (matricula,))
             row = cursor.fetchone()
-            if row:
-                return Usuario(*row)
-            return None
+            return Usuario(*row) if row else None
     
     def create(self, payload):
       with get_connection() as conn:
@@ -52,3 +56,43 @@ class UsuarioRepository:
           conn.commit()
           row = cursor.fetchone()
           return Usuario(*row)
+      
+    def list_by_papel(self, papel):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM usuarios WHERE papel = %s", 
+                             (papel, ))
+            rows = cursor.fetchall()
+            return [Usuario(*row) for row in rows]
+              
+    def update(self, usuario_id, payload):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """UPDATE usuarios
+                SET id_departamento=%s, nome=%s, email=%s,
+                matricula=%s, papel=%s, senha_hash=%s, ativo=%s
+                WHERE id_usuario=%s
+                RETURNING *""",
+                (
+                  payload["id_departamento"],
+                  payload["nome"],
+                  payload["email"],
+                  payload["matricula"],
+                  payload["papel"],
+                  payload["senha_hash"],
+                  payload["ativo"],
+                  usuario_id
+              )
+            )
+            conn.commit()
+            row = cursor.fetchone()
+            return Usuario(*row)
+    
+    def muda_status(self, usuario_id):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("UPDATE usuarios SET ativo = NOT ativo WHERE id_usuario = %s RETURNING *", (usuario_id,))
+            conn.commit()
+            row = cursor.fetchone()
+            return Usuario(*row)

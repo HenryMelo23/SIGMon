@@ -9,7 +9,6 @@
   </div>
   <form class="actions" method="get">
     <select name="papel">
-      <option value="">Todos os papéis</option>
       {% for key, label in role_labels.items() %}
       <option value="{{ key }}" {% if papel == key %}selected{% endif %}>{{ label }}</option>
       {% endfor %}

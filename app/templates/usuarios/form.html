@@ -16,7 +16,7 @@
   <label>Departamento
     <select name="id_departamento">
       {% for departamento in departamentos %}
-      <option value="{{ departamento.id_departamento }}" {% if usuario and usuario.id_departamento == departamento.id_departamento %}selected{% endif %}>{{ departamento.sigla }}</option>
+      <option value="{{ departamento.id_departamento }}" {% if usuario and usuario.id_departamento == departamento.id_departamento %}selected{% endif %}>{{ departamento.nome }}</option>
       {% endfor %}
     </select>
   </label>

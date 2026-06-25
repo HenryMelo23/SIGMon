@@ -4,6 +4,7 @@ from app.repositories.departamento_repository import DepartamentoRepository
 from app.repositories.usuario_repository import UsuarioRepository
 from app.services.usuario_service import UsuarioService
 from app.utils.decorators import login_required, roles_required
+from app.utils.validators import BusinessError
 
 usuarios_bp = Blueprint("usuarios", __name__, url_prefix="/usuarios")
 
@@ -12,7 +13,7 @@ usuarios_bp = Blueprint("usuarios", __name__, url_prefix="/usuarios")
 @login_required
 @roles_required("ADMINISTRADOR")
 def index():
-    papel = request.args.get("papel")
+    papel = request.args.get("papel", "ESTUDANTE")
     return render_template("usuarios/list.html", usuarios=UsuarioService().listar(papel), papel=papel)
 
 
@@ -21,9 +22,12 @@ def index():
 @roles_required("ADMINISTRADOR")
 def novo():
     if request.method == "POST":
-        UsuarioService().salvar(request.form)
-        flash("Usuário criado com sucesso.", "success")
-        return redirect(url_for("usuarios.index"))
+        try:
+            UsuarioService().salvar(request.form)
+            flash("Usuário criado com sucesso.", "success")
+            return redirect(url_for("usuarios.index"))
+        except BusinessError as exc:
+            flash(str(exc), "danger")
     return render_template("usuarios/form.html", usuario=None, departamentos=DepartamentoRepository().list_all())
 
 
@@ -33,9 +37,12 @@ def novo():
 def editar(id):
     service = UsuarioService()
     if request.method == "POST":
-        service.salvar(request.form, id)
-        flash("Usuário atualizado.", "success")
-        return redirect(url_for("usuarios.index"))
+        try:
+            service.salvar(request.form, id)
+            flash("Usuário atualizado.", "success")
+            return redirect(url_for("usuarios.index"))
+        except BusinessError as exc:
+            flash(str(exc), "danger")
     return render_template("usuarios/form.html", usuario=UsuarioRepository().get_by_id(id), departamentos=DepartamentoRepository().list_all())
 
 
