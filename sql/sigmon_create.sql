@@ -68,7 +68,6 @@ CREATE TABLE horarios (
     id_horario  SERIAL PRIMARY KEY,
     codigo      VARCHAR(20)  NOT NULL UNIQUE,
     descricao   VARCHAR(80)  NOT NULL,
-    dias        VARCHAR(10)  NOT NULL,
     turno       CHAR(1)      NOT NULL CHECK (turno IN ('M', 'T', 'N')),
     ativo       BOOLEAN      NOT NULL DEFAULT TRUE
 );
@@ -82,6 +81,7 @@ CREATE TABLE turmas (
     tipo_turma      VARCHAR(20)  NOT NULL CHECK (tipo_turma IN ('TEORICA', 'PRATICA')),
     id_horario      INTEGER      REFERENCES horarios(id_horario),
     sala            VARCHAR(80),
+    vagas_monitor   INTEGER      NOT NULL DEFAULT 0 CHECK (vagas_monitor >= 0),
     UNIQUE (id_disciplina, semestre, codigo_turma)
 );
 
@@ -101,13 +101,14 @@ CREATE TABLE candidaturas (
     id_candidatura  SERIAL PRIMARY KEY,
     id_edital       INTEGER      NOT NULL REFERENCES editais(id_edital),
     id_estudante    INTEGER      NOT NULL REFERENCES usuarios(id_usuario),
+    id_turma        INTEGER      NOT NULL REFERENCES turmas(id_turma),
     data_inscricao  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ira             NUMERIC(4,2) CHECK (ira BETWEEN 0 AND 5),
     nota_disciplina NUMERIC(4,2) CHECK (nota_disciplina BETWEEN 0 AND 10),
     status          VARCHAR(20)  NOT NULL DEFAULT 'INSCRITA' CHECK (
                         status IN ('INSCRITA', 'EM_ANALISE', 'APROVADA', 'REPROVADA', 'CANCELADA')
                     ),
-    UNIQUE (id_edital, id_estudante)
+    UNIQUE (id_edital, id_estudante, id_turma)
 );
 
 CREATE TABLE alocacoes_monitores (

@@ -49,12 +49,12 @@ SELECT setval('disciplinas_id_disciplina_seq', 5);
 -- HORARIOS (5 registros)
 -- ============================================================
 
-INSERT INTO horarios (id_horario, codigo, descricao, dias, turno, ativo) VALUES
-(1, '246M34', 'Seg/Qua/Sex 10h-11h50', '246', 'M', TRUE),
-(2, '35T23',  'Ter/Qui 14h-15h50',     '35',  'T', TRUE),
-(3, '6M1234', 'Sex 08h-11h50',         '6',   'M', TRUE),
-(4, '46T45',  'Qua/Sex 16h-17h50',     '46',  'T', TRUE),
-(5, '35M12',  'Ter/Qui 08h-09h50',     '35',  'M', TRUE);
+INSERT INTO horarios (id_horario, codigo, descricao, turno, ativo) VALUES
+(1, '246M34', 'Seg/Qua/Sex 10h-11h50', 'M', TRUE),
+(2, '35T23',  'Ter/Qui 14h-15h50',     'T', TRUE),
+(3, '6M1234', 'Sex 08h-11h50',         'M', TRUE),
+(4, '46T45',  'Qua/Sex 16h-17h50',     'T', TRUE),
+(5, '35M12',  'Ter/Qui 08h-09h50',     'M', TRUE);
 
 SELECT setval('horarios_id_horario_seq', 5);
 
@@ -62,12 +62,12 @@ SELECT setval('horarios_id_horario_seq', 5);
 -- TURMAS (5 registros)
 -- ============================================================
 
-INSERT INTO turmas (id_turma, id_disciplina, id_professor, semestre, codigo_turma, tipo_turma, id_horario, sala) VALUES
-(1, 1, 2, '2026.1', 'A', 'TEORICA', 1, 'PJC BT 036'),
-(2, 2, 2, '2026.1', 'B', 'PRATICA', 2, 'LAB CIC 02'),
-(3, 3, 3, '2026.1', 'C', 'TEORICA', 3, 'PJC BT 044'),
-(4, 4, 2, '2026.1', 'A', 'PRATICA', 4, 'LAB CIC 01'),
-(5, 5, 3, '2026.1', 'A', 'TEORICA', 5, 'MAT IB 007');
+INSERT INTO turmas (id_turma, id_disciplina, id_professor, semestre, codigo_turma, tipo_turma, id_horario, sala, vagas_monitor) VALUES
+(1, 1, 2, '2026.1', 'A', 'TEORICA', 1, 'PJC BT 036', 1),
+(2, 2, 2, '2026.1', 'B', 'PRATICA', 2, 'LAB CIC 02', 1),
+(3, 3, 3, '2026.1', 'C', 'TEORICA', 3, 'PJC BT 044', 2),
+(4, 4, 2, '2026.1', 'A', 'PRATICA', 4, 'LAB CIC 01', 1),
+(5, 5, 3, '2026.1', 'A', 'TEORICA', 5, 'MAT IB 007', 1);
 
 SELECT setval('turmas_id_turma_seq', 5);
 
@@ -88,15 +88,15 @@ SELECT setval('editais_id_edital_seq', 5);
 -- CANDIDATURAS (8 registros)
 -- ============================================================
 
-INSERT INTO candidaturas (id_candidatura, id_edital, id_estudante, data_inscricao, ira, nota_disciplina, status) VALUES
-(1, 1, 6, '2026-06-05', 4.35, 8.7, 'APROVADA'),
-(2, 2, 7, '2026-04-08', 4.62, 9.1, 'APROVADA'),
-(3, 3, 6, '2026-07-02', 4.35, 8.7, 'APROVADA'),
-(4, 4, 8, '2026-05-10', 4.10, 7.8, 'APROVADA'),
-(5, 5, 4, '2026-06-11', 4.50, 9.0, 'APROVADA'),
-(6, 1, 4, '2026-06-06', 4.50, 8.5, 'EM_ANALISE'),
-(7, 2, 8, '2026-04-10', 3.95, 6.8, 'REPROVADA'),
-(8, 1, 7, '2026-06-07', 4.20, 7.5, 'INSCRITA');
+INSERT INTO candidaturas (id_candidatura, id_edital, id_estudante, id_turma, data_inscricao, ira, nota_disciplina, status) VALUES
+(1, 1, 6, 1, '2026-06-05', 4.35, 8.7, 'APROVADA'),
+(2, 2, 7, 2, '2026-04-08', 4.62, 9.1, 'APROVADA'),
+(3, 3, 6, 3, '2026-07-02', 4.35, 8.7, 'APROVADA'),
+(4, 4, 8, 5, '2026-05-10', 4.10, 7.8, 'APROVADA'),
+(5, 5, 4, 3, '2026-06-11', 4.50, 9.0, 'APROVADA'),
+(6, 1, 4, 1, '2026-06-06', 4.50, 8.5, 'EM_ANALISE'),
+(7, 2, 8, 2, '2026-04-10', 3.95, 6.8, 'REPROVADA'),
+(8, 1, 7, 4, '2026-06-07', 4.20, 7.5, 'INSCRITA');
 
 SELECT setval('candidaturas_id_candidatura_seq', 8);
 
