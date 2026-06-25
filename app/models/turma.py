@@ -9,5 +9,8 @@ class Turma:
     semestre: str
     codigo_turma: str
     tipo_turma: str
-    horario: str
+    id_horario: int
     sala: str
+    disciplina_nome: str = ""
+    professor_nome: str = ""
+    horario_codigo: str = ""

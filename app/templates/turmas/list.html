@@ -8,7 +8,12 @@
     {% if current_user.papel == "ADMINISTRADOR" %}<a class="btn btn-primary" href="{{ url_for('turmas.form') }}">Nova turma</a>{% endif %}
   </div>
   <form class="actions" method="get">
-    <input name="semestre" placeholder="Filtrar por semestre" value="{{ semestre or '' }}">
+    <select name="semestre">
+      <option value="">Todos os semestres</option>
+      {% for s in semestres %}
+      <option value="{{ s }}" {% if semestre == s %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
     <button class="btn btn-outline">Filtrar</button>
   </form>
   <div class="table-wrap">
@@ -17,12 +22,12 @@
       <tbody>
       {% for turma in turmas %}
       <tr>
-        <td>{{ get_disciplina(turma.id_disciplina).nome }}</td>
-        <td>{{ get_usuario(turma.id_professor).nome }}</td>
+        <td>{{ turma.disciplina_nome }}</td>
+        <td>{{ turma.professor_nome }}</td>
         <td>{{ turma.semestre }}</td>
         <td>{{ turma.codigo_turma }}</td>
         <td>{{ turma.tipo_turma }}</td>
-        <td>{{ turma.horario }}</td>
+        <td>{{ turma.horario_codigo or '-' }}</td>
         <td>{{ turma.sala }}</td>
         <td class="actions">
           {% if current_user.papel == "ADMINISTRADOR" %}
