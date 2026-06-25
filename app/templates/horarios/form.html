@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Horário | SIGMon{% endblock %}
+{% block page_heading %}{{ "Editar" if horario else "Novo" }} horário{% endblock %}
+{% block content %}
+<form class="panel form-grid" method="post">
+  <label>Código UnB
+    <input name="codigo" placeholder="Ex: 246M34" value="{{ horario.codigo if horario else '' }}" required>
+  </label>
+  <label>Turno
+    <select name="turno">
+      <option value="M" {% if horario and horario.turno == "M" %}selected{% endif %}>Manhã</option>
+      <option value="T" {% if horario and horario.turno == "T" %}selected{% endif %}>Tarde</option>
+      <option value="N" {% if horario and horario.turno == "N" %}selected{% endif %}>Noite</option>
+    </select>
+  </label>
+  <label>Dias da semana
+    <input name="dias" placeholder="Ex: 246" value="{{ horario.dias if horario else '' }}" required>
+  </label>
+  <label class="full">Descrição
+    <input name="descricao" placeholder="Ex: Seg/Qua/Sex 10h-11h50" value="{{ horario.descricao if horario else '' }}" required>
+  </label>
+  <label class="full">
+    <input type="checkbox" name="ativo" {% if not horario or horario.ativo %}checked{% endif %}> Horário ativo
+  </label>
+  <div class="actions full">
+    <button class="btn btn-primary">Salvar</button>
+    <a class="btn btn-outline" href="{{ url_for('horarios.index') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

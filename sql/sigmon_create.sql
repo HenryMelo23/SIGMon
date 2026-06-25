@@ -25,6 +25,7 @@ DROP TABLE IF EXISTS alocacoes_monitores    CASCADE;
 DROP TABLE IF EXISTS candidaturas           CASCADE;
 DROP TABLE IF EXISTS editais                CASCADE;
 DROP TABLE IF EXISTS turmas                 CASCADE;
+DROP TABLE IF EXISTS horarios               CASCADE;
 DROP TABLE IF EXISTS disciplinas            CASCADE;
 DROP TABLE IF EXISTS usuarios               CASCADE;
 DROP TABLE IF EXISTS departamentos          CASCADE;
@@ -63,6 +64,15 @@ CREATE TABLE disciplinas (
     creditos        INTEGER      NOT NULL CHECK (creditos > 0)
 );
 
+CREATE TABLE horarios (
+    id_horario  SERIAL PRIMARY KEY,
+    codigo      VARCHAR(20)  NOT NULL UNIQUE,
+    descricao   VARCHAR(80)  NOT NULL,
+    dias        VARCHAR(10)  NOT NULL,
+    turno       CHAR(1)      NOT NULL CHECK (turno IN ('M', 'T', 'N')),
+    ativo       BOOLEAN      NOT NULL DEFAULT TRUE
+);
+
 CREATE TABLE turmas (
     id_turma        SERIAL PRIMARY KEY,
     id_disciplina   INTEGER      NOT NULL REFERENCES disciplinas(id_disciplina),
@@ -70,7 +80,7 @@ CREATE TABLE turmas (
     semestre        VARCHAR(10)  NOT NULL,
     codigo_turma    VARCHAR(20)  NOT NULL,
     tipo_turma      VARCHAR(20)  NOT NULL CHECK (tipo_turma IN ('TEORICA', 'PRATICA')),
-    horario         VARCHAR(120),
+    id_horario      INTEGER      REFERENCES horarios(id_horario),
     sala            VARCHAR(80),
     UNIQUE (id_disciplina, semestre, codigo_turma)
 );

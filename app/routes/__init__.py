@@ -1,4 +1,5 @@
 from app.routes.agenda_routes import agenda_bp
+from app.routes.horario_routes import horarios_bp
 from app.routes.alocacao_routes import alocacoes_bp
 from app.routes.avaliacao_routes import avaliacoes_bp
 from app.routes.auth_routes import auth_bp
@@ -30,5 +31,6 @@ def register_blueprints(app):
         frequencias_bp,
         avaliacoes_bp,
         financeiro_bp,
+        horarios_bp,
     ]:
         app.register_blueprint(bp)

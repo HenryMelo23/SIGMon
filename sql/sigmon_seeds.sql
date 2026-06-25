@@ -46,15 +46,28 @@ INSERT INTO disciplinas (id_disciplina, id_departamento, codigo, nome, creditos)
 SELECT setval('disciplinas_id_disciplina_seq', 5);
 
 -- ============================================================
+-- HORARIOS (5 registros)
+-- ============================================================
+
+INSERT INTO horarios (id_horario, codigo, descricao, dias, turno, ativo) VALUES
+(1, '246M34', 'Seg/Qua/Sex 10h-11h50', '246', 'M', TRUE),
+(2, '35T23',  'Ter/Qui 14h-15h50',     '35',  'T', TRUE),
+(3, '6M1234', 'Sex 08h-11h50',         '6',   'M', TRUE),
+(4, '46T45',  'Qua/Sex 16h-17h50',     '46',  'T', TRUE),
+(5, '35M12',  'Ter/Qui 08h-09h50',     '35',  'M', TRUE);
+
+SELECT setval('horarios_id_horario_seq', 5);
+
+-- ============================================================
 -- TURMAS (5 registros)
 -- ============================================================
 
-INSERT INTO turmas (id_turma, id_disciplina, id_professor, semestre, codigo_turma, tipo_turma, horario, sala) VALUES
-(1, 1, 2, '2026.1', 'A', 'TEORICA',  'Seg/Qua 10:00-11:50', 'PJC BT 036'),
-(2, 2, 2, '2026.1', 'B', 'PRATICA',  'Ter/Qui 14:00-15:50', 'LAB CIC 02'),
-(3, 3, 3, '2026.1', 'C', 'TEORICA',  'Sex 08:00-11:50',     'PJC BT 044'),
-(4, 4, 2, '2026.1', 'A', 'PRATICA',  'Qua/Sex 16:00-17:50', 'LAB CIC 01'),
-(5, 5, 3, '2026.1', 'A', 'TEORICA',  'Ter/Qui 08:00-09:50', 'MAT IB 007');
+INSERT INTO turmas (id_turma, id_disciplina, id_professor, semestre, codigo_turma, tipo_turma, id_horario, sala) VALUES
+(1, 1, 2, '2026.1', 'A', 'TEORICA', 1, 'PJC BT 036'),
+(2, 2, 2, '2026.1', 'B', 'PRATICA', 2, 'LAB CIC 02'),
+(3, 3, 3, '2026.1', 'C', 'TEORICA', 3, 'PJC BT 044'),
+(4, 4, 2, '2026.1', 'A', 'PRATICA', 4, 'LAB CIC 01'),
+(5, 5, 3, '2026.1', 'A', 'TEORICA', 5, 'MAT IB 007');
 
 SELECT setval('turmas_id_turma_seq', 5);
 
