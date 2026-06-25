@@ -11,6 +11,7 @@ class Turma:
     tipo_turma: str
     id_horario: int
     sala: str
+    vagas_monitor: int = 0
     disciplina_nome: str = ""
     professor_nome: str = ""
     horario_codigo: str = ""

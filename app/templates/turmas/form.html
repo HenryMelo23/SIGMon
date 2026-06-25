@@ -25,6 +25,7 @@
     </select>
   </label>
   <label>Sala <input name="sala" value="{{ turma.sala if turma else '' }}" required></label>
+  <label>Vagas de monitor <input type="number" name="vagas_monitor" min="0" value="{{ turma.vagas_monitor if turma else 0 }}" required></label>
   <div class="actions full">
     <button class="btn btn-primary">Salvar</button>
     <a class="btn btn-outline" href="{{ url_for('turmas.index') }}">Cancelar</a>

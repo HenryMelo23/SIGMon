@@ -28,6 +28,7 @@ class TurmaService:
             "tipo_turma": data.get("tipo_turma", "").strip(),
             "id_horario": int(data.get("id_horario")),
             "sala": data.get("sala", "").strip(),
+            "vagas_monitor": int(data.get("vagas_monitor", 0)),
         }
         professor = UsuarioRepository().get_by_id(payload["id_professor"])
         disciplina = DisciplinaRepository().get_by_id(payload["id_disciplina"])
@@ -41,13 +42,12 @@ class TurmaService:
         if conflito and conflito.id_turma != (int(turma_id) if turma_id else None):
             raise BusinessError("Este professor já possui uma turma neste horário e semestre.")
         duplicata = self.repo.find_duplicata(
-            payload["id_professor"],
             payload["id_disciplina"],
             payload["semestre"],
             payload["codigo_turma"]
         )
         if duplicata and duplicata.id_turma != (int(turma_id) if turma_id else None):
-            raise BusinessError("Já existe uma turma com esse código para este professor e disciplina no mesmo semestre.")
+            raise BusinessError("Já existe uma turma com esse código para esta disciplina neste semestre.")
         return self.repo.update(turma_id, payload) if turma_id else self.repo.create(payload)
 
     def remover(self, id):
