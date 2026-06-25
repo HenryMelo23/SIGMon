@@ -3,6 +3,8 @@
 -- SGBD: PostgreSQL
 -- Integrantes: Luis Henrique Bessa de Melo e Carlos Victor Albuquerque Oliveira
 
+CREATE EXTENSION IF NOT EXISTS unaccent;
+
 -- Para executar:
 --   sudo -u postgres psql
 --   CREATE DATABASE sigmon;
