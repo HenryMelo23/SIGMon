@@ -8,3 +8,4 @@ class Disciplina:
     codigo: str
     nome: str
     creditos: int
+    departamento_sigla: str = ""

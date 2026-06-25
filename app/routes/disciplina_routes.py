@@ -3,6 +3,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 from app.repositories.departamento_repository import DepartamentoRepository
 from app.services.disciplina_service import DisciplinaService
 from app.utils.decorators import login_required, roles_required
+from app.utils.validators import BusinessError
 
 disciplinas_bp = Blueprint("disciplinas", __name__, url_prefix="/disciplinas")
 
@@ -21,9 +22,12 @@ def index():
 def form(id=None):
     service = DisciplinaService()
     if request.method == "POST":
-        service.salvar(request.form, id)
-        flash("Disciplina salva.", "success")
-        return redirect(url_for("disciplinas.index"))
+        try:
+            service.salvar(request.form, id)
+            flash("Disciplina salva.", "success")
+            return redirect(url_for("disciplinas.index"))
+        except BusinessError as exc:
+            flash(str(exc), "danger")
     return render_template("disciplinas/form.html", disciplina=service.obter(id) if id else None, departamentos=DepartamentoRepository().list_all())
 
 
@@ -31,6 +35,9 @@ def form(id=None):
 @login_required
 @roles_required("ADMINISTRADOR")
 def remover(id):
-    DisciplinaService().remover(id)
-    flash("Disciplina removida.", "success")
+    try:
+        DisciplinaService().remover(id)
+        flash("Disciplina removida.", "success")
+    except BusinessError as exc:
+        flash(str(exc), "danger")
     return redirect(url_for("disciplinas.index"))

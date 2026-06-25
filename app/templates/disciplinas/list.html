@@ -16,7 +16,7 @@
         <td>{{ disciplina.codigo }}</td>
         <td>{{ disciplina.nome }}</td>
         <td>{{ disciplina.creditos }}</td>
-        <td>CIC</td>
+        <td>{{ disciplina.departamento_sigla }}</td>
         <td class="actions">
           <a class="btn btn-outline" href="{{ url_for('disciplinas.form', id=disciplina.id_disciplina) }}">Editar</a>
           <form data-confirm="Remover esta disciplina?" method="post" action="{{ url_for('disciplinas.remover', id=disciplina.id_disciplina) }}">
