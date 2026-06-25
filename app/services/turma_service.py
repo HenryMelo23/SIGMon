@@ -10,8 +10,11 @@ class TurmaService:
     
     def listar(self, semestre=None):
         if semestre:
-          return self.repo.list_by_semestre(semestre)
+            return self.repo.list_by_semestre(semestre)
         return self.repo.list_all()
+
+    def listar_por_professor(self, id_professor, semestre=None):
+        return self.repo.list_by_professor(id_professor, semestre)
     
     def obter(self, id):
         return self.repo.get_by_id(id)

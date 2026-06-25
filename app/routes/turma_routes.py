@@ -5,7 +5,7 @@ from app.repositories.horario_repository import HorarioRepository
 from app.repositories.usuario_repository import UsuarioRepository
 from app.repositories.turma_repository import TurmaRepository
 from app.services.turma_service import TurmaService
-from app.utils.decorators import login_required, roles_required
+from app.utils.decorators import current_user, login_required, roles_required
 from app.utils.validators import BusinessError
 
 turmas_bp = Blueprint("turmas", __name__, url_prefix="/turmas")
@@ -15,8 +15,13 @@ turmas_bp = Blueprint("turmas", __name__, url_prefix="/turmas")
 @login_required
 @roles_required("PROFESSOR", "ADMINISTRADOR")
 def index():
+    usuario = current_user()
     semestre = request.args.get("semestre")
-    turmas = TurmaService().listar(semestre)
+    service = TurmaService()
+    if usuario.papel == "PROFESSOR":
+        turmas = service.listar_por_professor(usuario.id_usuario, semestre)
+    else:
+        turmas = service.listar(semestre)
     semestres = TurmaRepository().list_semestres()
     return render_template("turmas/list.html", turmas=turmas, semestre=semestre, semestres=semestres)
 

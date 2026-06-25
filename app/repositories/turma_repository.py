@@ -42,6 +42,36 @@ class TurmaRepository:
             row = cursor.fetchone()
             return Turma(*row) if row else None
 
+    def list_by_professor(self, id_professor, semestre=None):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            if semestre:
+                cursor.execute(
+                    """
+                    SELECT t.*, d.nome AS disciplina_nome, u.nome AS professor_nome, h.codigo AS horario_codigo
+                    FROM turmas t
+                    JOIN disciplinas d ON t.id_disciplina = d.id_disciplina
+                    JOIN usuarios u ON t.id_professor = u.id_usuario
+                    LEFT JOIN horarios h ON t.id_horario = h.id_horario
+                    WHERE t.id_professor = %s AND t.semestre = %s
+                    """,
+                    (id_professor, semestre)
+                )
+            else:
+                cursor.execute(
+                    """
+                    SELECT t.*, d.nome AS disciplina_nome, u.nome AS professor_nome, h.codigo AS horario_codigo
+                    FROM turmas t
+                    JOIN disciplinas d ON t.id_disciplina = d.id_disciplina
+                    JOIN usuarios u ON t.id_professor = u.id_usuario
+                    LEFT JOIN horarios h ON t.id_horario = h.id_horario
+                    WHERE t.id_professor = %s
+                    """,
+                    (id_professor,)
+                )
+            rows = cursor.fetchall()
+            return [Turma(*row) for row in rows]
+
     def list_semestres(self):
         with get_connection() as conn:
             cursor = conn.cursor()
