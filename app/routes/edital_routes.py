@@ -14,13 +14,15 @@ editais_bp = Blueprint("editais", __name__, url_prefix="/editais")
 @login_required
 def index():
     filtro = request.args.get("status")
-    editais_status = EditalService().listar_com_status()
+    usuario = current_user()
+    service = EditalService()
+    dep = usuario.id_departamento if usuario.papel == "PROFESSOR" else None
+    editais_status = service.listar_com_status(dep)
     if filtro == "aberto":
         editais_status = [(e, aberto) for e, aberto in editais_status if aberto]
     if filtro == "encerrado":
         editais_status = [(e, aberto) for e, aberto in editais_status if not aberto]
     return render_template("editais/list.html", editais_status=editais_status, filtro=filtro)
-
 
 @editais_bp.get("/<int:id>")
 @login_required
@@ -36,9 +38,12 @@ def detail(id):
 def form(id=None):
     service = EditalService()
     if request.method == "POST":
-        service.salvar(request.form, id)
-        flash("Edital salvo.", "success")
-        return redirect(url_for("editais.index"))
+        try:
+            service.salvar(request.form, id)
+            flash("Edital salvo.", "success")
+            return redirect(url_for("editais.index"))
+        except BusinessError as exc:
+            flash(str(exc), "danger")
     return render_template("editais/form.html", edital=service.obter(id) if id else None, departamentos=DepartamentoRepository().list_all())
 
 
@@ -46,8 +51,11 @@ def form(id=None):
 @login_required
 @roles_required("ADMINISTRADOR")
 def remover(id):
-    EditalService().remover(id)
-    flash("Edital removido.", "success")
+    try:
+        EditalService().remover(id)
+        flash("Edital removido.", "success")
+    except BusinessError as exc:
+        flash(str(exc), "danger")
     return redirect(url_for("editais.index"))
 
 
