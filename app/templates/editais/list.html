@@ -17,14 +17,14 @@
   </form>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>Título</th><th>Período</th><th>Vagas</th><th>Nota mínima</th><th>Status</th><th>Ações</th></tr></thead>
+      <thead><tr><th>Título</th><th>Semestre</th><th>Período</th><th>Menção mínima</th><th>Status</th><th>Ações</th></tr></thead>
       <tbody>
       {% for edital, aberto in editais_status %}
       <tr>
         <td>{{ edital.titulo }}</td>
+        <td>{{ edital.semestre }}</td>
         <td>{{ edital.data_inicio }} a {{ edital.data_fim }}</td>
-        <td>{{ edital.quantidade_vagas }}</td>
-        <td>{{ "%.1f"|format(edital.nota_minima) }}</td>
+        <td>{{ edital.nota_minima }}</td>
         <td>{% set status = "Aberto" if aberto else "Encerrado" %}{% include "partials/status_badge.html" %}</td>
         <td class="actions">
           <a class="btn btn-outline" href="{{ url_for('editais.detail', id=edital.id_edital) }}">Detalhes</a>

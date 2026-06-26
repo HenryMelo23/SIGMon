@@ -10,8 +10,8 @@
   <p>{{ edital.descricao }}</p>
   <div class="grid metrics">
     {% set label = "Período" %}{% set value = edital.data_inicio ~ " a " ~ edital.data_fim %}{% include "partials/card.html" %}
-    {% set label = "Vagas" %}{% set value = edital.quantidade_vagas %}{% include "partials/card.html" %}
-    {% set label = "Nota mínima" %}{% set value = "%.1f"|format(edital.nota_minima) %}{% include "partials/card.html" %}
+    {% set label = "Semestre" %}{% set value = edital.semestre %}{% include "partials/card.html" %}
+    {% set label = "Menção mínima" %}{% set value = edital.nota_minima %}{% include "partials/card.html" %}
   </div>
   {% if current_user.papel == "ESTUDANTE" and aberto %}
   <form class="form-grid" method="post" action="{{ url_for('editais.candidatar', id=edital.id_edital) }}">

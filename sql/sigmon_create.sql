@@ -90,10 +90,10 @@ CREATE TABLE editais (
     id_departamento   INTEGER       NOT NULL REFERENCES departamentos(id_departamento),
     titulo            VARCHAR(180)  NOT NULL,
     descricao         TEXT,
+    semestre          VARCHAR(10)   NOT NULL,
     data_inicio       DATE          NOT NULL,
     data_fim          DATE          NOT NULL,
-    quantidade_vagas  INTEGER       NOT NULL CHECK (quantidade_vagas > 0),
-    nota_minima       NUMERIC(4,2)  NOT NULL DEFAULT 7.00 CHECK (nota_minima BETWEEN 0 AND 10),
+    nota_minima       VARCHAR(2)    NOT NULL DEFAULT 'MS' CHECK (nota_minima IN ('SS', 'MS', 'MM', 'MI', 'II', 'SR')),
     CHECK (data_fim >= data_inicio)
 );
 
@@ -104,7 +104,7 @@ CREATE TABLE candidaturas (
     id_turma        INTEGER      NOT NULL REFERENCES turmas(id_turma),
     data_inscricao  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ira             NUMERIC(4,2) CHECK (ira BETWEEN 0 AND 5),
-    nota_disciplina NUMERIC(4,2) CHECK (nota_disciplina BETWEEN 0 AND 10),
+    nota_disciplina VARCHAR(2)   CHECK (nota_disciplina IN ('SS', 'MS', 'MM', 'MI', 'II', 'SR')),
     status          VARCHAR(20)  NOT NULL DEFAULT 'INSCRITA' CHECK (
                         status IN ('INSCRITA', 'EM_ANALISE', 'APROVADA', 'REPROVADA', 'CANCELADA')
                     ),
