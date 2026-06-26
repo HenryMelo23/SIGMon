@@ -13,6 +13,7 @@ MENU_ITEMS = [
     ("Disciplinas", "disciplinas.index", {"ADMINISTRADOR"}),
     ("Horários", "horarios.index", {"ADMINISTRADOR"}),
     ("Turmas", "turmas.index", {"PROFESSOR", "ADMINISTRADOR"}),
+    ("Histórico Escolar", "historico.index", {"ESTUDANTE", "MONITOR", "ADMINISTRADOR"}),
     ("Editais", "editais.index", {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR", "FINANCEIRO"}),
     ("Candidaturas", "candidaturas.index", {"PROFESSOR", "ADMINISTRADOR"}),
     ("Minhas candidaturas", "candidaturas.minhas", {"ESTUDANTE"}),

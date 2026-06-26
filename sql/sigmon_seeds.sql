@@ -85,6 +85,23 @@ INSERT INTO editais (id_edital, id_departamento, titulo, descricao, semestre, da
 SELECT setval('editais_id_edital_seq', 5);
 
 -- ============================================================
+-- HISTORICO_ESCOLAR (8 registros)
+-- id_documento referencia o PDF enviado em documentos_anexos
+-- ============================================================
+
+INSERT INTO historico_escolar (id_historico, id_estudante, id_disciplina, id_documento, mencao, semestre, status, data_cadastro) VALUES
+(1, 6, 1, 6, 'SS', '2025.1', 'APROVADO', '2026-01-10'),
+(2, 6, 2, 6, 'MS', '2025.1', 'APROVADO', '2026-01-10'),
+(3, 7, 2, 7, 'SS', '2025.1', 'APROVADO', '2026-01-12'),
+(4, 8, 3, 8, 'MS', '2025.1', 'APROVADO', '2026-01-15'),
+(5, 4, 1, 9, 'SS', '2025.1', 'APROVADO', '2026-01-10'),
+(6, 4, 3, 9, 'SS', '2025.1', 'APROVADO', '2026-01-10'),
+(7, 8, 5, 8, 'MS', '2025.2', 'APROVADO', '2026-01-15'),
+(8, 4, 2, 9, 'MM', '2025.2', 'PENDENTE', '2026-06-01');
+
+SELECT setval('historico_escolar_id_historico_seq', 8);
+
+-- ============================================================
 -- CANDIDATURAS (8 registros)
 -- ============================================================
 
@@ -137,9 +154,13 @@ INSERT INTO documentos_anexos (id_documento, id_usuario, id_edital, id_candidatu
 (2, 6, 1, 1, 'historico_mateus.pdf',  'Historico Escolar',   'application/pdf', decode('255044462d312e34', 'hex'), '2026-06-05'),
 (3, 7, 2, 2, 'historico_beatriz.pdf', 'Historico Escolar',   'application/pdf', decode('255044462d312e34', 'hex'), '2026-04-08'),
 (4, 1, 1, NULL, 'edital_cic_2026_1.pdf', 'Edital Publicado', 'application/pdf', decode('255044462d312e34', 'hex'), '2026-06-01'),
-(5, 8, 4, 4, 'historico_pedro.pdf',   'Historico Escolar',   'application/pdf', decode('255044462d312e34', 'hex'), '2026-05-10');
+(5, 8, 4, 4, 'historico_pedro.pdf',   'Historico Escolar',   'application/pdf', decode('255044462d312e34', 'hex'), '2026-05-10'),
+(6, 6, NULL, NULL, 'historico_mateus_escolar.pdf',  'Historico Escolar', 'application/pdf', decode('255044462d312e34', 'hex'), '2026-01-10'),
+(7, 7, NULL, NULL, 'historico_beatriz_escolar.pdf', 'Historico Escolar', 'application/pdf', decode('255044462d312e34', 'hex'), '2026-01-12'),
+(8, 8, NULL, NULL, 'historico_pedro_escolar.pdf',   'Historico Escolar', 'application/pdf', decode('255044462d312e34', 'hex'), '2026-01-15'),
+(9, 4, NULL, NULL, 'historico_luisa_escolar.pdf',   'Historico Escolar', 'application/pdf', decode('255044462d312e34', 'hex'), '2026-01-10');
 
-SELECT setval('documentos_anexos_id_documento_seq', 5);
+SELECT setval('documentos_anexos_id_documento_seq', 9);
 
 -- ============================================================
 -- AGENDA_SLOTS (5 registros)

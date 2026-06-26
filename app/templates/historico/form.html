@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Histórico Escolar | SIGMon{% endblock %}
+{% block page_heading %}Adicionar disciplinas cursadas{% endblock %}
+{% block content %}
+<div class="panel" style="margin-bottom:1rem; border-left: 4px solid var(--color-primary);">
+  <p>Informe as disciplinas que você <strong>já cursou e foi aprovado</strong>. Essas informações serão usadas para validar sua candidatura a monitor.</p>
+  <p>Anexe seu <strong>histórico escolar em PDF</strong> como comprovante. O administrador irá analisar e aprovar cada disciplina informada.</p>
+</div>
+<form class="panel form-grid" method="post" enctype="multipart/form-data">
+  <label class="full">Comprovante (histórico escolar em PDF)
+    <input type="file" name="comprovante" accept="application/pdf" required>
+    <small>Sugestão de nome: <code>historico_MATRICULA_SEMESTRE.pdf</code> — ex: <code>historico_231045678_2025.1.pdf</code></small>
+  </label>
+
+  <div class="full" id="disciplinas-lista">
+    <div class="disciplina-row form-grid" style="margin-bottom:1rem;">
+      <label>Disciplina
+        <select name="id_disciplina" required>
+          {% for d in disciplinas %}
+          <option value="{{ d.id_disciplina }}">{{ d.codigo }} — {{ d.nome }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Semestre <input name="semestre" placeholder="Ex: 2025.1" required></label>
+      <label>Menção
+        <select name="mencao" required>
+          {% for m in ['SS', 'MS', 'MM', 'MI', 'II', 'SR'] %}
+          <option value="{{ m }}">{{ m }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <div class="full">
+    <button type="button" class="btn btn-outline" id="add-disciplina">+ Adicionar outra disciplina</button>
+  </div>
+
+  <div class="actions full">
+    <button class="btn btn-primary">Enviar</button>
+    <a class="btn btn-outline" href="{{ url_for('historico.index') }}">Cancelar</a>
+  </div>
+</form>
+
+<template id="disciplina-row-template">
+  <div class="disciplina-row form-grid" style="margin-bottom:1rem;">
+    <label>Disciplina
+      <select name="id_disciplina" required>
+        {% for d in disciplinas %}
+        <option value="{{ d.id_disciplina }}">{{ d.codigo }} — {{ d.nome }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Semestre <input name="semestre" placeholder="Ex: 2025.1" required></label>
+    <label>Menção
+      <select name="mencao" required>
+        {% for m in ['SS', 'MS', 'MM', 'MI', 'II', 'SR'] %}
+        <option value="{{ m }}">{{ m }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label style="align-self:flex-end;">
+      <button type="button" class="btn btn-danger remover-disciplina">Remover</button>
+    </label>
+  </div>
+</template>
+
+<script>
+  document.getElementById("add-disciplina").addEventListener("click", function () {
+    const template = document.getElementById("disciplina-row-template");
+    const clone = template.content.cloneNode(true);
+    clone.querySelector(".remover-disciplina").addEventListener("click", function () {
+      this.closest(".disciplina-row").remove();
+    });
+    document.getElementById("disciplinas-lista").appendChild(clone);
+  });
+</script>
+{% endblock %}

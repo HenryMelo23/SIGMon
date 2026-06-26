@@ -19,6 +19,7 @@ DROP TABLE IF EXISTS avaliacoes_tutoria     CASCADE;
 DROP TABLE IF EXISTS registros_frequencia   CASCADE;
 DROP TABLE IF EXISTS sessoes_tutoria        CASCADE;
 DROP TABLE IF EXISTS agenda_slots           CASCADE;
+DROP TABLE IF EXISTS historico_escolar      CASCADE;
 DROP TABLE IF EXISTS documentos_anexos      CASCADE;
 DROP TABLE IF EXISTS dados_bancarios        CASCADE;
 DROP TABLE IF EXISTS alocacoes_monitores    CASCADE;
@@ -149,6 +150,20 @@ CREATE TABLE documentos_anexos (
     mime_type       VARCHAR(100)  NOT NULL,
     conteudo        BYTEA,
     data_upload     TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE historico_escolar (
+    id_historico    SERIAL PRIMARY KEY,
+    id_estudante    INTEGER      NOT NULL REFERENCES usuarios(id_usuario),
+    id_disciplina   INTEGER      NOT NULL REFERENCES disciplinas(id_disciplina),
+    id_documento    INTEGER      REFERENCES documentos_anexos(id_documento),
+    mencao          VARCHAR(2)   NOT NULL CHECK (mencao IN ('SS', 'MS', 'MM', 'MI', 'II', 'SR')),
+    semestre        VARCHAR(10)  NOT NULL,
+    status          VARCHAR(20)  NOT NULL DEFAULT 'PENDENTE'
+                        CHECK (status IN ('PENDENTE', 'APROVADO', 'REJEITADO')),
+    justificativa   TEXT,
+    data_cadastro   DATE         NOT NULL DEFAULT CURRENT_DATE,
+    UNIQUE (id_estudante, id_disciplina, semestre)
 );
 
 CREATE TABLE agenda_slots (
