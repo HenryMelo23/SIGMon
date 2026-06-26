@@ -78,8 +78,7 @@ CREATE TABLE turmas (
     id_professor    INTEGER      NOT NULL REFERENCES usuarios(id_usuario),
     semestre        VARCHAR(10)  NOT NULL,
     codigo_turma    VARCHAR(20)  NOT NULL,
-    tipo_turma      VARCHAR(20)  NOT NULL CHECK (tipo_turma IN ('TEORICA', 'PRATICA')),
-    id_horario      INTEGER      REFERENCES horarios(id_horario),
+id_horario      INTEGER      REFERENCES horarios(id_horario),
     sala            VARCHAR(80),
     vagas_monitor   INTEGER      NOT NULL DEFAULT 0 CHECK (vagas_monitor >= 0),
     UNIQUE (id_disciplina, semestre, codigo_turma)

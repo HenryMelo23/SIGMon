@@ -25,8 +25,7 @@ class TurmaService:
             "id_professor": int(data.get("id_professor")),
             "semestre": data.get("semestre", "").strip(),
             "codigo_turma": data.get("codigo_turma", "").strip().upper(),
-            "tipo_turma": data.get("tipo_turma", "").strip(),
-            "id_horario": int(data.get("id_horario")),
+"id_horario": int(data.get("id_horario")),
             "sala": data.get("sala", "").strip(),
             "vagas_monitor": int(data.get("vagas_monitor", 0)),
         }

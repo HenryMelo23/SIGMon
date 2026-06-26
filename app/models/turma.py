@@ -8,7 +8,6 @@ class Turma:
     id_professor: int
     semestre: str
     codigo_turma: str
-    tipo_turma: str
     id_horario: int
     sala: str
     vagas_monitor: int = 0

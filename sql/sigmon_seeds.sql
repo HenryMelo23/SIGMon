@@ -62,12 +62,12 @@ SELECT setval('horarios_id_horario_seq', 5);
 -- TURMAS (5 registros)
 -- ============================================================
 
-INSERT INTO turmas (id_turma, id_disciplina, id_professor, semestre, codigo_turma, tipo_turma, id_horario, sala, vagas_monitor) VALUES
-(1, 1, 2, '2026.1', 'T01', 'TEORICA', 1, 'PJC BT 036', 1),
-(2, 2, 2, '2026.1', 'T01', 'PRATICA', 2, 'LAB CIC 02', 1),
-(3, 3, 3, '2026.1', 'T01', 'TEORICA', 3, 'PJC BT 044', 2),
-(4, 4, 2, '2026.1', 'T01', 'PRATICA', 4, 'LAB CIC 01', 1),
-(5, 3, 3, '2026.1', 'T02', 'TEORICA', 5, 'PJC BT 048', 1);
+INSERT INTO turmas (id_turma, id_disciplina, id_professor, semestre, codigo_turma, id_horario, sala, vagas_monitor) VALUES
+(1, 1, 2, '2026.1', 'T01', 1, 'PJC BT 036', 1),
+(2, 2, 2, '2026.1', 'T01', 2, 'LAB CIC 02', 1),
+(3, 3, 3, '2026.1', 'T01', 3, 'PJC BT 044', 2),
+(4, 4, 2, '2026.1', 'T01', 4, 'LAB CIC 01', 1),
+(5, 3, 3, '2026.1', 'T02', 5, 'PJC BT 048', 1);
 
 SELECT setval('turmas_id_turma_seq', 5);
 
