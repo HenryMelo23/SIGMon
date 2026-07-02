@@ -9,6 +9,13 @@ class SessaoRepository:
             cursor.execute("SELECT COUNT(*) FROM sessoes_tutoria WHERE realizada = FALSE")
             return cursor.fetchone()[0]
 
+    def get_by_id(self, id_sessao):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM sessoes_tutoria WHERE id_sessao = %s", (id_sessao,))
+            row = cursor.fetchone()
+            return SessaoTutoria(*row) if row else None
+
     def list_all(self):
         with get_connection() as conn:
             cursor = conn.cursor()

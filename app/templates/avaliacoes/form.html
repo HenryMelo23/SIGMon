@@ -2,13 +2,26 @@
 {% block title %}Nova avaliação | SIGMon{% endblock %}
 {% block page_heading %}Avaliar sessão{% endblock %}
 {% block content %}
+
+{% if slot %}
+{% set alocacao = get_alocacao(slot.id_alocacao) %}
+<div class="panel" style="margin-bottom:1rem; border-left: 4px solid var(--color-primary);">
+  <p>Você está avaliando a monitoria de <strong>{{ get_usuario(alocacao.id_monitor).nome }}</strong>
+     em <strong>{{ get_disciplina(alocacao.id_disciplina).nome }}</strong>
+     — turma <strong>{{ get_turma(alocacao.id_turma).codigo_turma }}</strong>.</p>
+  <p>Assunto da sessão: <em>{{ sessao.assunto }}</em></p>
+</div>
+{% endif %}
+
 <form class="panel form-grid" method="post">
   <label>Nota
     <select name="nota">
-      {% for n in [5,4,3,2,1] %}<option value="{{ n }}">{{ n }}</option>{% endfor %}
+      {% for n in [5,4,3,2,1] %}
+      <option value="{{ n }}">{{ n }} — {{ ["", "Muito ruim", "Ruim", "Regular", "Bom", "Excelente"][n] }}</option>
+      {% endfor %}
     </select>
   </label>
-  <label class="full">Comentário <textarea name="comentario" required></textarea></label>
+  <label class="full">Comentário <textarea name="comentario" placeholder="Descreva sua experiência..."></textarea></label>
   <div class="actions full">
     <button class="btn btn-primary">Enviar avaliação</button>
     <a class="btn btn-outline" href="{{ url_for('sessoes.index') }}">Cancelar</a>

@@ -9,3 +9,7 @@ class AvaliacaoTutoria:
     nota: int
     comentario: str
     data_avaliacao: str
+    monitor_nome: str = ""
+    disciplina_nome: str = ""
+    turma_codigo: str = ""
+    estudante_nome: str = ""
