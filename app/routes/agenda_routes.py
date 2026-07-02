@@ -13,20 +13,15 @@ agenda_bp = Blueprint("agenda", __name__, url_prefix="/agenda")
 @login_required
 @roles_required("ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR")
 def index():
-    slots = AgendaService().listar()
-    sessoes_por_slot = {}
-    for sessao in SessaoRepository().list_all():
-        sessoes_por_slot[sessao.id_slot] = sessoes_por_slot.get(sessao.id_slot, 0) + 1
-    alocacoes_por_slot = {
-        slot.id_slot: AlocacaoRepository().get_by_id(slot.id_alocacao)
-        for slot in slots
-    }
-    return render_template(
-        "agenda/list.html",
-        slots=slots,
-        sessoes_por_slot=sessoes_por_slot,
-        alocacoes_por_slot=alocacoes_por_slot,
-    )
+    usuario = current_user()
+    service = AgendaService()
+    if usuario.papel == "MONITOR":
+        return render_template(
+            "agenda/list.html",
+            meus_slots=service.listar_proprios(usuario.id_usuario),
+            slots_agenda=service.listar_inscritos(usuario.id_usuario),
+        )
+    return render_template("agenda/list.html", slots=service.listar(usuario))
 
 
 @agenda_bp.route("/novo", methods=["GET", "POST"])

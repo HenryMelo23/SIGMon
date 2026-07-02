@@ -10,8 +10,16 @@ class AgendaService:
         self.sessoes = SessaoRepository()
         self.alocacoes = AlocacaoRepository()
 
-    def listar(self):
+    def listar(self, usuario):
+        if usuario.papel == "ESTUDANTE":
+            return self.repo.list_by_turmas_inscritas(usuario.id_usuario)
         return self.repo.list_all()
+
+    def listar_proprios(self, id_monitor):
+        return self.repo.list_by_monitor(id_monitor)
+
+    def listar_inscritos(self, id_usuario):
+        return self.repo.list_by_turmas_inscritas(id_usuario)
 
     def disponiveis(self):
         return self.repo.list_disponiveis()
