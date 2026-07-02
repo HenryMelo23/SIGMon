@@ -30,6 +30,8 @@ class AgendaService:
         payload["reservado"] = False
         if payload.get("hora_fim", "") <= payload.get("hora_inicio", ""):
             raise BusinessError("O horário de fim deve ser posterior ao de início.")
+        if self.repo.find_conflito(payload["id_alocacao"], payload["data_slot"], payload["hora_inicio"], payload["hora_fim"]):
+            raise BusinessError("Já existe um horário nessa alocação que conflita com o intervalo informado.")
         return self.repo.create(payload)
 
     def editar_slot(self, slot_id, data, monitor):
@@ -44,6 +46,8 @@ class AgendaService:
         payload = dict(data)
         if payload.get("hora_fim", "") <= payload.get("hora_inicio", ""):
             raise BusinessError("O horário de fim deve ser posterior ao de início.")
+        if self.repo.find_conflito(slot.id_alocacao, payload["data_slot"], payload["hora_inicio"], payload["hora_fim"], exclude_id=slot_id):
+            raise BusinessError("Já existe um horário nessa alocação que conflita com o intervalo informado.")
         self.repo.update(slot_id, payload)
 
     def excluir_slot(self, slot_id, monitor):

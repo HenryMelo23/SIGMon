@@ -121,6 +121,18 @@ class AgendaRepository:
             cursor.execute("DELETE FROM agenda_slots WHERE id_slot = %s", (id_slot,))
             conn.commit()
 
+    def find_conflito(self, id_alocacao, data_slot, hora_inicio, hora_fim, exclude_id=None):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """SELECT COUNT(*) FROM agenda_slots
+                   WHERE id_alocacao = %s AND data_slot = %s
+                     AND hora_inicio < %s AND hora_fim > %s
+                     AND (%s IS NULL OR id_slot != %s)""",
+                (id_alocacao, data_slot, hora_fim, hora_inicio, exclude_id, exclude_id)
+            )
+            return cursor.fetchone()[0] > 0
+
     def marcar_reservado(self, id_slot, reservado=True):
         with get_connection() as conn:
             cursor = conn.cursor()
