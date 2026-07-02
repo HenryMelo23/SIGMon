@@ -14,3 +14,5 @@ class Turma:
     disciplina_nome: str = ""
     professor_nome: str = ""
     horario_codigo: str = ""
+    mencao_estudante: str = ""
+    vagas_disponiveis: int = 0

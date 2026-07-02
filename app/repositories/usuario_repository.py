@@ -115,6 +115,15 @@ class UsuarioRepository:
             )
             return cursor.fetchone()[0] > 0
 
+    def mudar_papel(self, usuario_id, papel):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "UPDATE usuarios SET papel = %s WHERE id_usuario = %s",
+                (papel, usuario_id)
+            )
+            conn.commit()
+
     def muda_status(self, usuario_id):
         with get_connection() as conn:
             cursor = conn.cursor()
@@ -122,3 +131,12 @@ class UsuarioRepository:
             conn.commit()
             row = cursor.fetchone()
             return Usuario(*row)
+
+    def reverter_monitores_para_estudante(self):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "UPDATE usuarios SET papel = 'ESTUDANTE' WHERE papel = 'MONITOR'"
+            )
+            conn.commit()
+            return cursor.rowcount

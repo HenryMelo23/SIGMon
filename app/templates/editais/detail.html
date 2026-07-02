@@ -13,12 +13,56 @@
     {% set label = "Semestre" %}{% set value = edital.semestre %}{% include "partials/card.html" %}
     {% set label = "Menção mínima" %}{% set value = edital.nota_minima %}{% include "partials/card.html" %}
   </div>
-  {% if current_user.papel == "ESTUDANTE" and aberto %}
-  <form class="form-grid" method="post" action="{{ url_for('editais.candidatar', id=edital.id_edital) }}">
-    <label>IRA <input name="ira" type="number" min="0" max="5" step="0.01" required></label>
-    <label>Nota na disciplina <input name="nota_disciplina" type="number" min="0" max="10" step="0.1" required></label>
-    <div class="actions full"><button class="btn btn-primary">Candidatar-me</button></div>
-  </form>
+</section>
+
+{% if current_user.papel in ["ESTUDANTE", "MONITOR"] and aberto %}
+<section class="panel">
+  <div class="panel-header">
+    <h2>Turmas disponíveis para candidatura</h2>
+  </div>
+  {% if turmas_elegiveis %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Disciplina</th>
+          <th>Turma</th>
+          <th>Professor</th>
+          <th>Horário</th>
+          <th>Sala</th>
+          <th>Vagas disponíveis</th>
+          <th>Sua menção</th>
+          <th>Candidatar</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for turma in turmas_elegiveis %}
+      <tr>
+        <td>{{ turma.disciplina_nome }}</td>
+        <td>{{ turma.codigo_turma }}</td>
+        <td>{{ turma.professor_nome }}</td>
+        <td>{{ turma.horario_codigo or '-' }}</td>
+        <td>{{ turma.sala }}</td>
+        <td>{{ turma.vagas_disponiveis }}</td>
+        <td>{{ turma.mencao_estudante }}</td>
+        <td>
+          <form method="post" action="{{ url_for('editais.candidatar', id=edital.id_edital) }}">
+            <input type="hidden" name="id_turma" value="{{ turma.id_turma }}">
+            <input type="hidden" name="nota_disciplina" value="{{ turma.mencao_estudante }}">
+            <input name="ira" type="number" min="0" max="5" step="0.01" placeholder="IRA" required style="width:80px;">
+            <button class="btn btn-primary">Candidatar</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% elif tem_disciplinas_elegiveis %}
+  <p>Você possui disciplinas elegíveis, mas não há turmas disponíveis para elas neste semestre.</p>
+  {% else %}
+  <p>Você não possui disciplinas aprovadas com a menção mínima exigida por este edital. Cadastre seu histórico escolar para verificar sua elegibilidade.</p>
   {% endif %}
 </section>
+{% endif %}
 {% endblock %}

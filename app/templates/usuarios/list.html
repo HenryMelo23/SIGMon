@@ -5,7 +5,12 @@
 <section class="panel">
   <div class="panel-header">
     <h2>Gestão de usuários</h2>
-    <a class="btn btn-primary" href="{{ url_for('usuarios.novo') }}">Novo usuário</a>
+    <div style="display:flex;gap:.5rem;align-items:center;">
+      <form method="post" action="{{ url_for('usuarios.encerrar_semestre') }}" onsubmit="return confirm('⚠️ ATENÇÃO: Esta ação irá reverter TODOS os monitores para Estudante e deve ser executada apenas ao final do semestre letivo.\n\nDeseja continuar?')">
+        <button class="btn btn-danger" type="submit">Encerrar semestre</button>
+      </form>
+      <a class="btn btn-primary" href="{{ url_for('usuarios.novo') }}">Novo usuário</a>
+    </div>
   </div>
   <form class="actions" method="get">
     <select name="papel">

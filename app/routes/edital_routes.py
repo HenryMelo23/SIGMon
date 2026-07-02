@@ -2,6 +2,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app.repositories.departamento_repository import DepartamentoRepository
 from app.repositories.edital_repository import EditalRepository
+from app.repositories.turma_repository import TurmaRepository
 from app.services.candidatura_service import CandidaturaService
 from app.services.edital_service import EditalService
 from app.utils.decorators import current_user, login_required, roles_required
@@ -27,8 +28,21 @@ def index():
 @editais_bp.get("/<int:id>")
 @login_required
 def detail(id):
+    usuario = current_user()
     edital = EditalRepository().get_by_id(id)
-    return render_template("editais/detail.html", edital=edital, aberto=EditalService().esta_aberto(edital))
+    aberto = EditalService().esta_aberto(edital)
+    turmas_elegiveis = []
+    tem_disciplinas_elegiveis = False
+    if usuario.papel in ("ESTUDANTE", "MONITOR") and aberto:
+        repo = TurmaRepository()
+        turmas_elegiveis = repo.list_elegiveis_para_edital(
+            edital.id_departamento, edital.semestre, usuario.id_usuario, edital.nota_minima
+        )
+        tem_disciplinas_elegiveis = repo.tem_historico_elegivel(
+            edital.id_departamento, usuario.id_usuario, edital.nota_minima
+        )
+    return render_template("editais/detail.html", edital=edital, aberto=aberto,
+                           turmas_elegiveis=turmas_elegiveis, tem_disciplinas_elegiveis=tem_disciplinas_elegiveis)
 
 
 @editais_bp.route("/novo", methods=["GET", "POST"])
@@ -61,7 +75,7 @@ def remover(id):
 
 @editais_bp.post("/<int:id>/candidatar")
 @login_required
-@roles_required("ESTUDANTE")
+@roles_required("ESTUDANTE", "MONITOR")
 def candidatar(id):
     try:
         CandidaturaService().candidatar(id, current_user(), request.form)

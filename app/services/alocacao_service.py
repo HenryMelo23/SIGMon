@@ -26,4 +26,9 @@ class AlocacaoService:
         return self.repo.create(payload)
 
     def alterar_status(self, alocacao_id, status):
-        return self.repo.update(alocacao_id, {"status": status})
+        alocacao = self.repo.get_by_id(alocacao_id)
+        self.repo.update(alocacao_id, {"status": status})
+        if status == "ENCERRADA":
+            usuario_repo = UsuarioRepository()
+            if not usuario_repo.tem_alocacoes_ativas(alocacao.id_monitor):
+                usuario_repo.mudar_papel(alocacao.id_monitor, "ESTUDANTE")

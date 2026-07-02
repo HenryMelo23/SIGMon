@@ -12,6 +12,59 @@ class TurmaRepository:
                 return Turma(*row)
             return None
 
+    def list_elegiveis_para_edital(self, id_departamento, semestre, id_estudante, nota_minima):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                SELECT t.id_turma, t.id_disciplina, t.id_professor, t.semestre, t.codigo_turma,
+                       t.id_horario, t.sala, t.vagas_monitor,
+                       d.nome AS disciplina_nome, u.nome AS professor_nome,
+                       h.codigo AS horario_codigo, he.mencao AS mencao_estudante,
+                       t.vagas_monitor - (
+                           SELECT COUNT(*) FROM candidaturas c2
+                           JOIN editais e2 ON c2.id_edital = e2.id_edital
+                           WHERE c2.id_turma = t.id_turma AND c2.status = 'APROVADA' AND e2.semestre = %s
+                       ) AS vagas_disponiveis
+                FROM turmas t
+                JOIN disciplinas d ON t.id_disciplina = d.id_disciplina
+                JOIN usuarios u ON t.id_professor = u.id_usuario
+                LEFT JOIN horarios h ON t.id_horario = h.id_horario
+                JOIN historico_escolar he ON he.id_disciplina = t.id_disciplina
+                WHERE d.id_departamento = %s
+                  AND t.semestre = %s
+                  AND he.id_estudante = %s
+                  AND he.status = 'APROVADO'
+                  AND ARRAY_POSITION(ARRAY['SR','II','MI','MM','MS','SS'], he.mencao)
+                      >= ARRAY_POSITION(ARRAY['SR','II','MI','MM','MS','SS'], %s)
+                  AND t.vagas_monitor > (
+                      SELECT COUNT(*) FROM candidaturas c3
+                      JOIN editais e3 ON c3.id_edital = e3.id_edital
+                      WHERE c3.id_turma = t.id_turma AND c3.status = 'APROVADA' AND e3.semestre = %s
+                  )
+                ORDER BY d.nome, t.codigo_turma
+                """,
+                (semestre, id_departamento, semestre, id_estudante, nota_minima, semestre)
+            )
+            return [Turma(*row) for row in cursor.fetchall()]
+
+    def tem_historico_elegivel(self, id_departamento, id_estudante, nota_minima):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                SELECT COUNT(*) FROM historico_escolar he
+                JOIN disciplinas d ON he.id_disciplina = d.id_disciplina
+                WHERE d.id_departamento = %s
+                  AND he.id_estudante = %s
+                  AND he.status = 'APROVADO'
+                  AND ARRAY_POSITION(ARRAY['SR','II','MI','MM','MS','SS'], he.mencao)
+                      >= ARRAY_POSITION(ARRAY['SR','II','MI','MM','MS','SS'], %s)
+                """,
+                (id_departamento, id_estudante, nota_minima)
+            )
+            return cursor.fetchone()[0] > 0
+
     def tem_alocacoes(self, id_turma):
       with get_connection() as conn:
           cursor = conn.cursor()

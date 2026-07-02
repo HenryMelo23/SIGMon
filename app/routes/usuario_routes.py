@@ -61,3 +61,12 @@ def status(id):
     except BusinessError as exc:
         flash(str(exc), "danger")
     return redirect(url_for("usuarios.index", papel=papel))
+
+
+@usuarios_bp.post("/encerrar-semestre")
+@login_required
+@roles_required("ADMINISTRADOR")
+def encerrar_semestre():
+    total = UsuarioRepository().reverter_monitores_para_estudante()
+    flash(f"Semestre encerrado: {total} monitor(es) revertido(s) para Estudante.", "success")
+    return redirect(url_for("usuarios.index", papel="MONITOR"))

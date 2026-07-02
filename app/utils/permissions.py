@@ -16,7 +16,7 @@ MENU_ITEMS = [
     ("Histórico Escolar", "historico.index", {"ESTUDANTE", "MONITOR", "ADMINISTRADOR"}),
     ("Editais", "editais.index", {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR", "FINANCEIRO"}),
     ("Candidaturas", "candidaturas.index", {"PROFESSOR", "ADMINISTRADOR"}),
-    ("Minhas candidaturas", "candidaturas.minhas", {"ESTUDANTE"}),
+    ("Minhas candidaturas", "candidaturas.minhas", {"ESTUDANTE", "MONITOR"}),
     ("Alocações", "alocacoes.index", {"MONITOR", "PROFESSOR", "ADMINISTRADOR"}),
     ("Agenda", "agenda.index", {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR"}),
     ("Sessões", "sessoes.index", {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR"}),
