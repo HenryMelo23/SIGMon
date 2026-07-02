@@ -1,5 +1,6 @@
 from datetime import date
 
+from app.repositories.alocacao_repository import AlocacaoRepository
 from app.repositories.candidatura_repository import CandidaturaRepository
 from app.repositories.edital_repository import EditalRepository
 from app.repositories.usuario_repository import UsuarioRepository
@@ -77,7 +78,23 @@ class CandidaturaService:
             self.repo.update_status(candidatura_id, status)
             self.repo.cancel_outras(candidatura.id_estudante, edital.semestre, candidatura_id)
             UsuarioRepository().mudar_papel(candidatura.id_estudante, "MONITOR")
+            alocacao_repo = AlocacaoRepository()
+            if alocacao_repo.find_by_candidatura(candidatura_id):
+                alocacao_repo.reativar_por_candidatura(candidatura_id)
+            else:
+                alocacao_repo.create({
+                    "id_candidatura": candidatura_id,
+                    "id_monitor": candidatura.id_estudante,
+                    "id_disciplina": turma.id_disciplina,
+                    "id_turma": candidatura.id_turma,
+                    "id_professor": turma.id_professor,
+                    "data_inicio": edital.data_inicio_monitoria,
+                    "data_fim": edital.data_fim_monitoria,
+                    "carga_horaria_semanal": turma.carga_horaria_semanal,
+                    "status": "ATIVA",
+                })
         else:
             if candidatura.status == "APROVADA":
                 UsuarioRepository().mudar_papel(candidatura.id_estudante, "ESTUDANTE")
+                AlocacaoRepository().encerrar_por_candidatura(candidatura_id)
             self.repo.update_status(candidatura_id, status)

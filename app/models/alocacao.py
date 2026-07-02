@@ -13,3 +13,7 @@ class AlocacaoMonitor:
     data_fim: str
     carga_horaria_semanal: int
     status: str
+    monitor_nome: str = ""
+    disciplina_nome: str = ""
+    turma_codigo: str = ""
+    professor_nome: str = ""

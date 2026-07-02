@@ -5,25 +5,39 @@
 <section class="panel">
   <div class="panel-header">
     <h2>Monitores alocados</h2>
-    {% if current_user.papel == "ADMINISTRADOR" %}<a class="btn btn-primary" href="{{ url_for('alocacoes.nova') }}">Nova alocação</a>{% endif %}
   </div>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>Monitor</th><th>Disciplina</th><th>Turma</th><th>Professor</th><th>Período</th><th>Carga</th><th>Status</th><th>Ações</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Monitor</th>
+          <th>Disciplina</th>
+          <th>Turma</th>
+          <th>Professor</th>
+          <th>Período</th>
+          <th>Carga</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
       <tbody>
       {% for a in alocacoes %}
       <tr>
-        <td>{{ get_usuario(a.id_monitor).nome }}</td>
-        <td>{{ get_disciplina(a.id_disciplina).nome }}</td>
-        <td>{{ get_turma(a.id_turma).codigo_turma }}</td>
-        <td>{{ get_usuario(a.id_professor).nome }}</td>
+        <td>{{ a.monitor_nome }}</td>
+        <td>{{ a.disciplina_nome }}</td>
+        <td>{{ a.turma_codigo }}</td>
+        <td>{{ a.professor_nome }}</td>
         <td>{{ a.data_inicio }} a {{ a.data_fim }}</td>
         <td>{{ a.carga_horaria_semanal }}h/semana</td>
         <td>{% set status = a.status %}{% include "partials/status_badge.html" %}</td>
         <td>
           {% if current_user.papel in ["ADMINISTRADOR", "PROFESSOR"] %}
           <form class="actions" method="post" action="{{ url_for('alocacoes.status', id=a.id_alocacao) }}">
-            <select name="status"><option>ATIVA</option><option>ENCERRADA</option><option>SUSPENSA</option></select>
+            <select name="status">
+              {% for s in ["ATIVA", "SUSPENSA", "ENCERRADA"] %}
+              <option value="{{ s }}" {% if a.status == s %}selected{% endif %}>{{ s|title }}</option>
+              {% endfor %}
+            </select>
             <button class="btn btn-outline">Atualizar</button>
           </form>
           {% endif %}

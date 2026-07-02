@@ -67,6 +67,8 @@ def status(id):
 @login_required
 @roles_required("ADMINISTRADOR")
 def encerrar_semestre():
+    from app.repositories.alocacao_repository import AlocacaoRepository
+    AlocacaoRepository().encerrar_todas_ativas()
     total = UsuarioRepository().reverter_monitores_para_estudante()
     flash(f"Semestre encerrado: {total} monitor(es) revertido(s) para Estudante.", "success")
     return redirect(url_for("usuarios.index", papel="MONITOR"))
