@@ -39,8 +39,9 @@ class EditalRepository:
           cursor = conn.cursor()
           cursor.execute(
               """INSERT INTO editais (id_departamento, titulo,
-                 descricao, semestre, data_inicio, data_fim, nota_minima)
-                 VALUES (%s, %s, %s, %s, %s, %s, %s)
+                 descricao, semestre, data_inicio, data_fim, nota_minima,
+                 data_inicio_monitoria, data_fim_monitoria)
+                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                  RETURNING *""",
               (
                   payload["id_departamento"],
@@ -50,6 +51,8 @@ class EditalRepository:
                   payload["data_inicio"],
                   payload["data_fim"],
                   payload["nota_minima"],
+                  payload["data_inicio_monitoria"],
+                  payload["data_fim_monitoria"],
               )
           )
           conn.commit()
@@ -62,7 +65,8 @@ class EditalRepository:
             cursor.execute(
                 """UPDATE editais
                 SET id_departamento=%s, titulo=%s, descricao=%s,
-                semestre=%s, data_inicio=%s, data_fim=%s, nota_minima=%s
+                semestre=%s, data_inicio=%s, data_fim=%s, nota_minima=%s,
+                data_inicio_monitoria=%s, data_fim_monitoria=%s
                 WHERE id_edital=%s
                 RETURNING *""",
                 (
@@ -73,6 +77,8 @@ class EditalRepository:
                   payload["data_inicio"],
                   payload["data_fim"],
                   payload["nota_minima"],
+                  payload["data_inicio_monitoria"],
+                  payload["data_fim_monitoria"],
                   id_edital
               )
             )

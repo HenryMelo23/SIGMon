@@ -8,8 +8,10 @@
   </label>
   <label>Título <input name="titulo" value="{{ edital.titulo if edital else '' }}" required></label>
   <label>Semestre <input name="semestre" placeholder="Ex: 2026.1" value="{{ edital.semestre if edital else '' }}" required></label>
-  <label>Data início <input type="date" name="data_inicio" value="{{ edital.data_inicio if edital else '' }}" required></label>
-  <label>Data fim <input type="date" name="data_fim" value="{{ edital.data_fim if edital else '' }}" required></label>
+  <label>Início das inscrições <input type="date" name="data_inicio" value="{{ edital.data_inicio if edital else '' }}" required></label>
+  <label>Fim das inscrições <input type="date" name="data_fim" value="{{ edital.data_fim if edital else '' }}" required></label>
+  <label>Início da monitoria <input type="date" name="data_inicio_monitoria" value="{{ edital.data_inicio_monitoria if edital else '' }}" required></label>
+  <label>Fim da monitoria <input type="date" name="data_fim_monitoria" value="{{ edital.data_fim_monitoria if edital else '' }}" required></label>
   <label>Menção mínima
     <select name="nota_minima">
       {% for mencao in ['SS', 'MS', 'MM', 'MI', 'II', 'SR'] %}

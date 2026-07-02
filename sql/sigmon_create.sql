@@ -94,8 +94,11 @@ CREATE TABLE editais (
     semestre          VARCHAR(10)   NOT NULL,
     data_inicio       DATE          NOT NULL,
     data_fim          DATE          NOT NULL,
-    nota_minima       VARCHAR(2)    NOT NULL DEFAULT 'MS' CHECK (nota_minima IN ('SS', 'MS', 'MM', 'MI', 'II', 'SR')),
-    CHECK (data_fim >= data_inicio)
+    nota_minima             VARCHAR(2) NOT NULL DEFAULT 'MS' CHECK (nota_minima IN ('SS', 'MS', 'MM', 'MI', 'II', 'SR')),
+    data_inicio_monitoria   DATE       NOT NULL,
+    data_fim_monitoria      DATE       NOT NULL,
+    CHECK (data_fim >= data_inicio),
+    CHECK (data_fim_monitoria >= data_inicio_monitoria)
 );
 
 CREATE TABLE candidaturas (
