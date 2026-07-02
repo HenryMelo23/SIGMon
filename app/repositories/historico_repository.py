@@ -58,6 +58,16 @@ class HistoricoRepository:
             )
             return cursor.fetchone() is not None
 
+    def find_aprovada_by_estudante_disciplina(self, id_estudante, id_disciplina):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """SELECT id_historico FROM historico_escolar
+                   WHERE id_estudante = %s AND id_disciplina = %s AND status = 'APROVADO'""",
+                (id_estudante, id_disciplina)
+            )
+            return cursor.fetchone() is not None
+
     def get_documento(self, id_documento):
         with get_connection() as conn:
             cursor = conn.cursor()

@@ -186,13 +186,13 @@ INSERT INTO agenda_slots (id_slot, id_alocacao, data_slot, hora_inicio, hora_fim
 (2, 1, '2026-07-09', '14:00', '15:00', 'Google Meet',        'ONLINE',     TRUE),
 (3, 2, '2026-07-08', '16:00', '17:00', 'Laboratorio CIC 01', 'PRESENCIAL', TRUE),
 (4, 2, '2026-07-10', '16:00', '17:00', 'Microsoft Teams',    'ONLINE',     TRUE),
-(5, 1, '2026-07-14', '14:00', '15:00', 'Laboratorio CIC 02', 'PRESENCIAL', FALSE);
+(5, 1, '2026-07-14', '14:00', '15:00', 'Laboratorio CIC 02', 'PRESENCIAL', TRUE);
 
 SELECT setval('agenda_slots_id_slot_seq', 5);
 
 -- ============================================================
 -- SESSOES_TUTORIA (5 registros)
--- Slots 1-4 reservados e com sessao. Slot 5 ainda disponivel.
+-- Slots 1-5 reservados com sessao.
 -- ============================================================
 
 INSERT INTO sessoes_tutoria (id_sessao, id_slot, id_estudante, assunto, observacoes, realizada, data_registro) VALUES
@@ -200,7 +200,7 @@ INSERT INTO sessoes_tutoria (id_sessao, id_slot, id_estudante, assunto, observac
 (2, 2, 4, 'SQL Joins',         'Atendimento concluido com exercicios praticos.', TRUE,  '2026-07-09'),
 (3, 3, 8, 'Arvores Binarias',  'Revisao de busca e insercao em arvores.',        TRUE,  '2026-07-08'),
 (4, 4, 8, 'Listas Ligadas',    'Implementacao de lista simplesmente ligada.',    TRUE,  '2026-07-10'),
-(5, 2, 8, 'Recursao',          'Exercicios de fatorial e Fibonacci.',            FALSE, '2026-07-09');
+(5, 5, 8, 'Recursao',          'Exercicios de fatorial e Fibonacci.',            FALSE, '2026-07-14');
 
 SELECT setval('sessoes_tutoria_id_sessao_seq', 5);
 

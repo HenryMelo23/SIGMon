@@ -19,6 +19,7 @@ DROP TABLE IF EXISTS avaliacoes_tutoria     CASCADE;
 DROP TABLE IF EXISTS registros_frequencia   CASCADE;
 DROP TABLE IF EXISTS sessoes_tutoria        CASCADE;
 DROP TABLE IF EXISTS agenda_slots           CASCADE;
+DROP TABLE IF EXISTS inscricoes_turmas      CASCADE;
 DROP TABLE IF EXISTS historico_escolar      CASCADE;
 DROP TABLE IF EXISTS documentos_anexos      CASCADE;
 DROP TABLE IF EXISTS dados_bancarios        CASCADE;
@@ -168,6 +169,18 @@ CREATE TABLE historico_escolar (
     justificativa   TEXT,
     data_cadastro   DATE         NOT NULL DEFAULT CURRENT_DATE,
     UNIQUE (id_estudante, id_disciplina, semestre)
+);
+
+CREATE TABLE inscricoes_turmas (
+    id_inscricao  SERIAL PRIMARY KEY,
+    id_estudante  INTEGER      NOT NULL REFERENCES usuarios(id_usuario),
+    id_turma      INTEGER      NOT NULL REFERENCES turmas(id_turma),
+    id_documento  INTEGER      REFERENCES documentos_anexos(id_documento),
+    status        VARCHAR(20)  NOT NULL DEFAULT 'PENDENTE'
+                  CHECK (status IN ('PENDENTE', 'APROVADA', 'REJEITADA')),
+    justificativa TEXT,
+    data_cadastro DATE         NOT NULL DEFAULT CURRENT_DATE,
+    UNIQUE (id_estudante, id_turma)
 );
 
 CREATE TABLE agenda_slots (

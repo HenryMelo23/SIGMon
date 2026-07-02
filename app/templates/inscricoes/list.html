@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Inscrições em Turmas | SIGMon{% endblock %}
+{% block page_heading %}Inscrições em Turmas{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header">
+    <h2>{% if current_user.papel == "ADMINISTRADOR" %}{{ "Inscrições Aprovadas" if filtro == "aprovada" else "Inscrições Pendentes" }}{% else %}Minhas Inscrições{% endif %}</h2>
+    {% if current_user.papel in ["ESTUDANTE", "MONITOR"] %}
+    <a class="btn btn-primary" href="{{ url_for('inscricoes.novo') }}">Adicionar turmas</a>
+    {% endif %}
+  </div>
+  {% if current_user.papel == "ADMINISTRADOR" %}
+  <div class="actions" style="margin-bottom:1rem;">
+    <a class="btn {% if not filtro %}btn-primary{% else %}btn-outline{% endif %}" href="{{ url_for('inscricoes.index') }}">Pendentes</a>
+    <a class="btn {% if filtro == 'aprovada' %}btn-primary{% else %}btn-outline{% endif %}" href="{{ url_for('inscricoes.index', filtro='aprovada') }}">Aprovadas</a>
+  </div>
+  {% endif %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          {% if current_user.papel == "ADMINISTRADOR" %}<th>Estudante</th>{% endif %}
+          <th>Turma</th>
+          <th>Disciplina</th>
+          <th>Semestre</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for i in inscricoes %}
+      <tr>
+        {% if current_user.papel == "ADMINISTRADOR" %}<td>{{ i.estudante_nome }}</td>{% endif %}
+        <td>{{ i.turma_codigo }}</td>
+        <td>{{ i.disciplina_nome }}</td>
+        <td>{{ i.semestre }}</td>
+        <td>
+          {% set status = i.status %}{% include "partials/status_badge.html" %}
+          {% if i.status == "REJEITADA" and i.justificativa %}
+          <small style="display:block; color: var(--color-danger); margin-top:.25rem;">{{ i.justificativa }}</small>
+          {% endif %}
+        </td>
+        <td class="actions">
+          <a class="btn btn-outline" href="{{ url_for('inscricoes.comprovante', id=i.id_inscricao) }}" target="_blank">PDF</a>
+          {% if current_user.papel == "ADMINISTRADOR" %}
+            {% if filtro != "aprovada" %}
+            <form method="post" action="{{ url_for('inscricoes.aprovar', id=i.id_inscricao) }}">
+              <button class="btn btn-primary">Aprovar</button>
+            </form>
+            <form method="post" action="{{ url_for('inscricoes.rejeitar', id=i.id_inscricao) }}" style="display:flex; gap:.5rem; align-items:center;">
+              <input name="justificativa" placeholder="Justificativa" required style="flex:1;">
+              <button class="btn btn-danger">Rejeitar</button>
+            </form>
+            {% else %}
+            <form method="post" action="{{ url_for('inscricoes.reverter', id=i.id_inscricao) }}" style="display:flex; gap:.5rem; align-items:center;">
+              <input name="justificativa" placeholder="Motivo da reversão" required style="flex:1;">
+              <button class="btn btn-danger">Reverter</button>
+            </form>
+            {% endif %}
+          {% else %}
+            {% if i.status in ["PENDENTE", "REJEITADA"] %}
+            <form data-confirm="Remover esta inscrição?" method="post" action="{{ url_for('inscricoes.remover', id=i.id_inscricao) }}">
+              <button class="btn btn-danger">Remover</button>
+            </form>
+            {% endif %}
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+        {% set colspan = 6 %}{% include "partials/table_empty.html" %}
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

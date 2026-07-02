@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Inscrições em Turmas | SIGMon{% endblock %}
+{% block page_heading %}Declarar turmas matriculadas{% endblock %}
+{% block content %}
+<div class="panel" style="margin-bottom:1rem; border-left: 4px solid var(--color-primary);">
+  <p>Informe as turmas em que você está <strong>matriculado no semestre atual</strong>. Essas informações serão usadas para filtrar os horários de monitoria disponíveis para você.</p>
+  <p>Anexe seu <strong>comprovante de matrícula em PDF</strong>. O administrador irá analisar e aprovar cada turma informada.</p>
+</div>
+<form class="panel form-grid" method="post" enctype="multipart/form-data">
+  <label class="full">Comprovante de matrícula (PDF)
+    <input type="file" name="comprovante" accept="application/pdf" required>
+    <small>Sugestão de nome: <code>matricula_MATRICULA_SEMESTRE.pdf</code> — ex: <code>matricula_231045678_2026.1.pdf</code></small>
+  </label>
+
+  <div class="full" id="turmas-lista">
+    <div class="turma-row form-grid" style="margin-bottom:1rem;">
+      <label class="full">Turma
+        <select name="id_turma" required>
+          {% for t in turmas %}
+          <option value="{{ t.id_turma }}">{{ t.semestre }} — {{ t.codigo_turma }} — {{ t.disciplina_nome }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <div class="full">
+    <button type="button" class="btn btn-outline" id="add-turma">+ Adicionar outra turma</button>
+  </div>
+
+  <div class="actions full">
+    <button class="btn btn-primary">Enviar</button>
+    <a class="btn btn-outline" href="{{ url_for('inscricoes.index') }}">Cancelar</a>
+  </div>
+</form>
+
+<template id="turma-row-template">
+  <div class="turma-row form-grid" style="margin-bottom:1rem;">
+    <label style="flex:1;">Turma
+      <select name="id_turma" required>
+        {% for t in turmas %}
+        <option value="{{ t.id_turma }}">{{ t.semestre }} — {{ t.codigo_turma }} — {{ t.disciplina_nome }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label style="align-self:flex-end;">
+      <button type="button" class="btn btn-danger remover-turma">Remover</button>
+    </label>
+  </div>
+</template>
+
+<script>
+  document.getElementById("add-turma").addEventListener("click", function () {
+    const template = document.getElementById("turma-row-template");
+    const clone = template.content.cloneNode(true);
+    clone.querySelector(".remover-turma").addEventListener("click", function () {
+      this.closest(".turma-row").remove();
+    });
+    document.getElementById("turmas-lista").appendChild(clone);
+  });
+</script>
+{% endblock %}
