@@ -200,7 +200,6 @@ CREATE TABLE sessoes_tutoria (
     id_slot         INTEGER      NOT NULL UNIQUE REFERENCES agenda_slots(id_slot),
     id_estudante    INTEGER      NOT NULL REFERENCES usuarios(id_usuario),
     assunto         VARCHAR(180) NOT NULL,
-    observacoes     TEXT,
     realizada       BOOLEAN      NOT NULL DEFAULT FALSE,
     data_registro   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

@@ -195,12 +195,12 @@ SELECT setval('agenda_slots_id_slot_seq', 5);
 -- Slots 1-5 reservados com sessao.
 -- ============================================================
 
-INSERT INTO sessoes_tutoria (id_sessao, id_slot, id_estudante, assunto, observacoes, realizada, data_registro) VALUES
-(1, 1, 4, 'Modelagem ER',      'Duvidas sobre cardinalidade e normalizacao.',    TRUE,  '2026-07-07'),
-(2, 2, 4, 'SQL Joins',         'Atendimento concluido com exercicios praticos.', TRUE,  '2026-07-09'),
-(3, 3, 8, 'Arvores Binarias',  'Revisao de busca e insercao em arvores.',        TRUE,  '2026-07-08'),
-(4, 4, 8, 'Listas Ligadas',    'Implementacao de lista simplesmente ligada.',    TRUE,  '2026-07-10'),
-(5, 5, 8, 'Recursao',          'Exercicios de fatorial e Fibonacci.',            FALSE, '2026-07-14');
+INSERT INTO sessoes_tutoria (id_sessao, id_slot, id_estudante, assunto, realizada, data_registro) VALUES
+(1, 1, 4, 'Modelagem ER',      TRUE,  '2026-07-07'),
+(2, 2, 4, 'SQL Joins',         TRUE,  '2026-07-09'),
+(3, 3, 8, 'Arvores Binarias',  TRUE,  '2026-07-08'),
+(4, 4, 8, 'Listas Ligadas',    TRUE,  '2026-07-10'),
+(5, 5, 8, 'Recursao',          FALSE, '2026-07-14');
 
 SELECT setval('sessoes_tutoria_id_sessao_seq', 5);
 

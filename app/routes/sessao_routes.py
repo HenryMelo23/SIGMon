@@ -11,8 +11,17 @@ sessoes_bp = Blueprint("sessoes", __name__, url_prefix="/sessoes")
 @login_required
 @roles_required("ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR")
 def index():
+    usuario = current_user()
+    service = SessaoService()
     slots = {slot.id_slot: slot for slot in AgendaRepository().list_all()}
-    return render_template("sessoes/list.html", sessoes=SessaoService().listar(current_user()), slots=slots)
+    if usuario.papel == "MONITOR":
+        return render_template(
+            "sessoes/list.html",
+            sessoes_monitor=service.listar_como_monitor(usuario.id_usuario),
+            sessoes_estudante=service.listar_como_estudante(usuario.id_usuario),
+            slots=slots,
+        )
+    return render_template("sessoes/list.html", sessoes=service.listar(usuario), slots=slots)
 
 
 @sessoes_bp.post("/<int:id>/realizar")
