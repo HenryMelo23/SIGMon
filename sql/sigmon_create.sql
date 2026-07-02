@@ -81,7 +81,8 @@ CREATE TABLE turmas (
     codigo_turma    VARCHAR(20)  NOT NULL,
 id_horario      INTEGER      REFERENCES horarios(id_horario),
     sala            VARCHAR(80),
-    vagas_monitor   INTEGER      NOT NULL DEFAULT 0 CHECK (vagas_monitor >= 0),
+    vagas_monitor         INTEGER NOT NULL DEFAULT 0 CHECK (vagas_monitor >= 0),
+    carga_horaria_semanal INTEGER NOT NULL DEFAULT 12 CHECK (carga_horaria_semanal > 0),
     UNIQUE (id_disciplina, semestre, codigo_turma)
 );
 

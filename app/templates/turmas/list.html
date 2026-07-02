@@ -18,7 +18,7 @@
   </form>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>Disciplina</th><th>Professor</th><th>Semestre</th><th>Turma</th><th>Horário</th><th>Sala</th><th>Vagas</th>{% if current_user.papel == "ADMINISTRADOR" %}<th>Ações</th>{% endif %}</tr></thead>
+      <thead><tr><th>Disciplina</th><th>Professor</th><th>Semestre</th><th>Turma</th><th>Horário</th><th>Sala</th><th>Vagas</th><th>Carga</th>{% if current_user.papel == "ADMINISTRADOR" %}<th>Ações</th>{% endif %}</tr></thead>
       <tbody>
       {% for turma in turmas %}
       <tr>
@@ -29,6 +29,7 @@
         <td>{{ turma.horario_codigo or '-' }}</td>
         <td>{{ turma.sala }}</td>
         <td>{{ turma.vagas_monitor }}</td>
+        <td>{{ turma.carga_horaria_semanal }}h/sem</td>
         {% if current_user.papel == "ADMINISTRADOR" %}
         <td class="actions">
           <a class="btn btn-outline" href="{{ url_for('turmas.form', id=turma.id_turma) }}">Editar</a>

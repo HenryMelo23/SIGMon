@@ -168,8 +168,8 @@ class TurmaRepository:
         with get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                """INSERT INTO turmas (id_disciplina, id_professor, semestre, codigo_turma, id_horario, sala, vagas_monitor)
-                   VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """INSERT INTO turmas (id_disciplina, id_professor, semestre, codigo_turma, id_horario, sala, vagas_monitor, carga_horaria_semanal)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                    RETURNING *""",
                 (
                     payload["id_disciplina"],
@@ -179,6 +179,7 @@ class TurmaRepository:
                     payload["id_horario"],
                     payload["sala"],
                     payload["vagas_monitor"],
+                    payload["carga_horaria_semanal"],
                 )
             )
             conn.commit()
@@ -191,7 +192,7 @@ class TurmaRepository:
             cursor.execute(
                 """
                 UPDATE turmas
-                SET id_disciplina=%s, id_professor=%s, semestre=%s, codigo_turma=%s, id_horario=%s, sala=%s, vagas_monitor=%s
+                SET id_disciplina=%s, id_professor=%s, semestre=%s, codigo_turma=%s, id_horario=%s, sala=%s, vagas_monitor=%s, carga_horaria_semanal=%s
                 WHERE id_turma=%s
                 RETURNING *
                 """,
@@ -203,6 +204,7 @@ class TurmaRepository:
                     payload["id_horario"],
                     payload["sala"],
                     payload["vagas_monitor"],
+                    payload["carga_horaria_semanal"],
                     id_turma
                 )
             )

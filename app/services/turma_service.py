@@ -28,7 +28,10 @@ class TurmaService:
 "id_horario": int(data.get("id_horario")),
             "sala": data.get("sala", "").strip(),
             "vagas_monitor": int(data.get("vagas_monitor", 0)),
+            "carga_horaria_semanal": int(data.get("carga_horaria_semanal", 12)),
         }
+        if payload["carga_horaria_semanal"] < 1:
+            raise BusinessError("A carga horária semanal deve ser de no mínimo 1 hora.")
         professor = UsuarioRepository().get_by_id(payload["id_professor"])
         disciplina = DisciplinaRepository().get_by_id(payload["id_disciplina"])
         if professor.id_departamento != disciplina.id_departamento:
