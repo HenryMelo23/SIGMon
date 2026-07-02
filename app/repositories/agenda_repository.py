@@ -97,6 +97,30 @@ class AgendaRepository:
             id_slot = cursor.fetchone()[0]
             return self.get_by_id(id_slot)
 
+    def update(self, id_slot, payload):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """UPDATE agenda_slots
+                   SET data_slot=%s, hora_inicio=%s, hora_fim=%s, local_atendimento=%s, modalidade=%s
+                   WHERE id_slot=%s""",
+                (
+                    payload["data_slot"],
+                    payload["hora_inicio"],
+                    payload["hora_fim"],
+                    payload["local_atendimento"],
+                    payload["modalidade"],
+                    id_slot,
+                )
+            )
+            conn.commit()
+
+    def delete(self, id_slot):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM agenda_slots WHERE id_slot = %s", (id_slot,))
+            conn.commit()
+
     def marcar_reservado(self, id_slot, reservado=True):
         with get_connection() as conn:
             cursor = conn.cursor()

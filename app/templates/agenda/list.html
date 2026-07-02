@@ -2,7 +2,7 @@
 {% block title %}Agenda | SIGMon{% endblock %}
 {% block page_heading %}Agenda{% endblock %}
 
-{% macro slots_table(rows, pode_reservar) %}
+{% macro slots_table(rows, pode_reservar, pode_editar) %}
 <div class="table-wrap">
   <table>
     <thead>
@@ -15,7 +15,7 @@
         <th>Local</th>
         <th>Modalidade</th>
         <th>Status</th>
-        {% if pode_reservar %}<th>Reservar</th>{% endif %}
+        {% if pode_reservar or pode_editar %}<th>Ações</th>{% endif %}
       </tr>
     </thead>
     <tbody>
@@ -26,27 +26,33 @@
       <td>{{ slot.turma_codigo }}</td>
       <td>{{ slot.data_slot }}</td>
       <td>{{ slot.hora_inicio }} – {{ slot.hora_fim }}</td>
-      <td>{{ slot.local_atendimento }}</td>
+      <td>{% if slot.modalidade == "ONLINE" %}Online{% else %}{{ slot.local_atendimento }}{% endif %}</td>
       <td>{{ slot.modalidade }}</td>
       <td>
         {% set status = "Reservado" if slot.reservado else "Disponível" %}
         {% include "partials/status_badge.html" %}
       </td>
-      {% if pode_reservar %}
-      <td>
-        {% if not slot.reservado %}
+      {% if pode_reservar or pode_editar %}
+      <td class="actions">
+        {% if pode_reservar and not slot.reservado %}
         <form class="actions" method="post" action="{{ url_for('agenda.reservar', id=slot.id_slot) }}">
           <input name="assunto" placeholder="Assunto" required>
           <button class="btn btn-primary">Reservar</button>
         </form>
-        {% else %}
+        {% elif pode_reservar %}
         —
+        {% endif %}
+        {% if pode_editar and not slot.reservado %}
+        <a class="btn btn-outline" href="{{ url_for('agenda.editar', id=slot.id_slot) }}">Editar</a>
+        <form data-confirm="Excluir este horário?" method="post" action="{{ url_for('agenda.excluir', id=slot.id_slot) }}">
+          <button class="btn btn-danger">Excluir</button>
+        </form>
         {% endif %}
       </td>
       {% endif %}
     </tr>
     {% else %}
-      {% set colspan = 9 if pode_reservar else 8 %}
+      {% set colspan = 9 if (pode_reservar or pode_editar) else 8 %}
       {% include "partials/table_empty.html" %}
     {% endfor %}
     </tbody>
@@ -63,14 +69,14 @@
     <h2>Meus horários de atendimento</h2>
     <a class="btn btn-primary" href="{{ url_for('agenda.novo') }}">Novo horário</a>
   </div>
-  {{ slots_table(meus_slots, false) }}
+  {{ slots_table(meus_slots, false, true) }}
 </section>
 
 <section class="panel">
   <div class="panel-header">
     <h2>Horários para agendar</h2>
   </div>
-  {{ slots_table(slots_agenda, true) }}
+  {{ slots_table(slots_agenda, true, false) }}
 </section>
 
 {% else %}
@@ -79,7 +85,7 @@
   <div class="panel-header">
     <h2>Horários de atendimento</h2>
   </div>
-  {{ slots_table(slots, current_user.papel == "ESTUDANTE") }}
+  {{ slots_table(slots, current_user.papel == "ESTUDANTE", false) }}
 </section>
 
 {% endif %}

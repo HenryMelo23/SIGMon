@@ -29,10 +29,46 @@ def index():
 @roles_required("MONITOR")
 def novo():
     if request.method == "POST":
-        AgendaService().criar_slot(request.form)
-        flash("Horário de atendimento criado.", "success")
-        return redirect(url_for("agenda.index"))
+        try:
+            AgendaService().criar_slot(request.form)
+            flash("Horário de atendimento criado.", "success")
+            return redirect(url_for("agenda.index"))
+        except BusinessError as exc:
+            flash(str(exc), "danger")
     return render_template("agenda/form.html", alocacoes=AlocacaoRepository().list_by_monitor(current_user().id_usuario))
+
+
+@agenda_bp.route("/<int:id>/editar", methods=["GET", "POST"])
+@login_required
+@roles_required("MONITOR")
+def editar(id):
+    service = AgendaService()
+    slot = service.repo.get_by_id(id)
+    if not slot or slot.reservado:
+        flash("Horário não encontrado ou já reservado.", "danger")
+        return redirect(url_for("agenda.index"))
+    if request.method == "POST":
+        try:
+            service.editar_slot(id, request.form, current_user())
+            flash("Horário atualizado.", "success")
+            return redirect(url_for("agenda.index"))
+        except BusinessError as exc:
+            flash(str(exc), "danger")
+    return render_template("agenda/form.html",
+                           alocacoes=AlocacaoRepository().list_by_monitor(current_user().id_usuario),
+                           slot=slot)
+
+
+@agenda_bp.post("/<int:id>/excluir")
+@login_required
+@roles_required("MONITOR")
+def excluir(id):
+    try:
+        AgendaService().excluir_slot(id, current_user())
+        flash("Horário excluído.", "success")
+    except BusinessError as exc:
+        flash(str(exc), "danger")
+    return redirect(url_for("agenda.index"))
 
 
 @agenda_bp.post("/<int:id>/reservar")
