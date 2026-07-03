@@ -1,5 +1,6 @@
 from datetime import date
 
+from app.database.db import get_connection
 from app.repositories.alocacao_repository import AlocacaoRepository
 from app.repositories.candidatura_repository import CandidaturaRepository
 from app.repositories.edital_repository import EditalRepository
@@ -75,24 +76,13 @@ class CandidaturaService:
             vagas_ocupadas = self.repo.count_aprovadas_turma(candidatura.id_turma, edital.semestre)
             if vagas_ocupadas >= turma.vagas_monitor:
                 raise BusinessError("Esta turma não possui mais vagas disponíveis.")
-            self.repo.update_status(candidatura_id, status)
-            self.repo.cancel_outras(candidatura.id_estudante, edital.semestre, candidatura_id)
-            UsuarioRepository().mudar_papel(candidatura.id_estudante, "MONITOR")
-            alocacao_repo = AlocacaoRepository()
-            if alocacao_repo.find_by_candidatura(candidatura_id):
-                alocacao_repo.update_status_por_candidatura(candidatura_id, "ATIVA")
-            else:
-                alocacao_repo.create({
-                    "id_candidatura": candidatura_id,
-                    "id_monitor": candidatura.id_estudante,
-                    "id_disciplina": turma.id_disciplina,
-                    "id_turma": candidatura.id_turma,
-                    "id_professor": turma.id_professor,
-                    "data_inicio": edital.data_inicio_monitoria,
-                    "data_fim": edital.data_fim_monitoria,
-                    "carga_horaria_semanal": turma.carga_horaria_semanal,
-                    "status": "ATIVA",
-                })
+            with get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    "CALL aprovar_candidatura_e_alocar(%s, %s)",
+                    (candidatura_id, usuario.id_usuario)
+                )
+                conn.commit()
         else:
             if candidatura.status == "APROVADA":
                 UsuarioRepository().mudar_papel(candidatura.id_estudante, "ESTUDANTE")

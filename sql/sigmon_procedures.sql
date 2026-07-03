@@ -2,21 +2,38 @@
 -- Executar APOS sigmon_create.sql
 
 -- ============================================================
--- PROCEDURE 1: aprova candidatura e cria alocacao em uma transacao
--- Uso: CALL aprovar_candidatura_e_alocar(id_cand, data_ini, data_fim, carga, id_prof);
+-- PROCEDURE: aprova candidatura e cria alocacao em uma transacao
+--
+-- Centraliza no banco todos os passos de aprovacao:
+--   1. Aprova a candidatura
+--   2. Cancela outras candidaturas do estudante no mesmo semestre
+--   3. Muda o papel do estudante para MONITOR
+--   4. Cria ou reativa a alocacao
+--   5. Registra auditoria
+--
+-- As validacoes de negocio (vagas, edital aberto, etc) ficam no Python.
+-- Esta procedure garante que os passos de escrita ocorram atomicamente.
+--
+-- Uso:
+--   CALL aprovar_candidatura_e_alocar(id_candidatura, id_aprovador);
+--
+-- Exemplo com seeds:
+--   CALL aprovar_candidatura_e_alocar(3, 2);
 -- ============================================================
 
 CREATE OR REPLACE PROCEDURE aprovar_candidatura_e_alocar(
-    p_candidatura_id      INTEGER,
-    p_data_inicio         DATE,
-    p_data_fim            DATE,
-    p_carga_horaria       INTEGER,
-    p_id_professor        INTEGER
+    p_candidatura_id INTEGER,
+    p_id_aprovador   INTEGER
 )
 LANGUAGE plpgsql AS $$
 DECLARE
-    v_candidatura candidaturas%ROWTYPE;
-    v_disciplina_id INTEGER;
+    v_candidatura   candidaturas%ROWTYPE;
+    v_id_disciplina INTEGER;
+    v_id_professor  INTEGER;
+    v_carga         INTEGER;
+    v_data_inicio   DATE;
+    v_data_fim      DATE;
+    v_semestre      VARCHAR(10);
 BEGIN
     SELECT * INTO v_candidatura
     FROM candidaturas
@@ -31,71 +48,60 @@ BEGIN
             p_candidatura_id, v_candidatura.status;
     END IF;
 
-    SELECT id_departamento INTO v_disciplina_id
-    FROM editais
-    WHERE id_edital = v_candidatura.id_edital;
+    SELECT t.id_disciplina, t.id_professor, t.carga_horaria_semanal
+    INTO v_id_disciplina, v_id_professor, v_carga
+    FROM turmas t
+    WHERE t.id_turma = v_candidatura.id_turma;
+
+    SELECT e.data_inicio_monitoria, e.data_fim_monitoria, e.semestre
+    INTO v_data_inicio, v_data_fim, v_semestre
+    FROM editais e
+    WHERE e.id_edital = v_candidatura.id_edital;
 
     UPDATE candidaturas
     SET status = 'APROVADA'
     WHERE id_candidatura = p_candidatura_id;
 
-    INSERT INTO alocacoes_monitores (
-        id_candidatura,
-        id_monitor,
-        id_disciplina,
-        id_professor,
-        data_inicio,
-        data_fim,
-        carga_horaria_semanal,
-        status
-    ) VALUES (
-        p_candidatura_id,
-        v_candidatura.id_estudante,
-        v_disciplina_id,
-        p_id_professor,
-        p_data_inicio,
-        p_data_fim,
-        p_carga_horaria,
-        'ATIVA'
-    );
+    UPDATE candidaturas c
+    SET status = 'CANCELADA'
+    FROM editais e
+    WHERE c.id_edital = e.id_edital
+      AND c.id_estudante = v_candidatura.id_estudante
+      AND e.semestre = v_semestre
+      AND c.id_candidatura != p_candidatura_id
+      AND c.status IN ('INSCRITA', 'EM_ANALISE');
+
+    UPDATE usuarios
+    SET papel = 'MONITOR'
+    WHERE id_usuario = v_candidatura.id_estudante;
+
+    IF EXISTS (SELECT 1 FROM alocacoes_monitores WHERE id_candidatura = p_candidatura_id) THEN
+        UPDATE alocacoes_monitores
+        SET status = 'ATIVA'
+        WHERE id_candidatura = p_candidatura_id;
+    ELSE
+        INSERT INTO alocacoes_monitores (
+            id_candidatura, id_monitor, id_disciplina, id_turma,
+            id_professor, data_inicio, data_fim, carga_horaria_semanal, status
+        ) VALUES (
+            p_candidatura_id,
+            v_candidatura.id_estudante,
+            v_id_disciplina,
+            v_candidatura.id_turma,
+            v_id_professor,
+            v_data_inicio,
+            v_data_fim,
+            v_carga,
+            'ATIVA'
+        );
+    END IF;
 
     INSERT INTO auditoria (id_usuario, acao, entidade, detalhes)
     VALUES (
-        p_id_professor,
+        p_id_aprovador,
         'APROVAR_CANDIDATURA',
         'candidaturas',
-        'Candidatura ' || p_candidatura_id || ' aprovada. Alocacao criada para monitor ' || v_candidatura.id_estudante
-    );
-END;
-$$;
-
--- ============================================================
--- PROCEDURE 2: valida em lote os registros de frequencia de uma alocacao
--- Uso: CALL validar_frequencias_alocacao(id_alocacao, id_professor);
--- ============================================================
-
-CREATE OR REPLACE PROCEDURE validar_frequencias_alocacao(
-    p_id_alocacao  INTEGER,
-    p_id_professor INTEGER
-)
-LANGUAGE plpgsql AS $$
-DECLARE
-    v_total INTEGER;
-BEGIN
-    UPDATE registros_frequencia
-    SET validado = TRUE,
-        id_professor_validador = p_id_professor
-    WHERE id_alocacao = p_id_alocacao
-      AND validado = FALSE;
-
-    GET DIAGNOSTICS v_total = ROW_COUNT;
-
-    INSERT INTO auditoria (id_usuario, acao, entidade, detalhes)
-    VALUES (
-        p_id_professor,
-        'VALIDAR_FREQUENCIAS',
-        'registros_frequencia',
-        v_total || ' registros da alocacao ' || p_id_alocacao || ' validados'
+        'Candidatura ' || p_candidatura_id || ' aprovada. Monitor: ' || v_candidatura.id_estudante
     );
 END;
 $$;
