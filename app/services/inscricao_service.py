@@ -14,7 +14,7 @@ class InscricaoService:
         if usuario.papel == "ADMINISTRADOR":
             if filtro == "aprovada":
                 return self.repo.list_by_status("APROVADA")
-            return self.repo.list_pendentes()
+            return self.repo.list_by_status("PENDENTE")
         return self.repo.list_by_estudante(usuario.id_usuario)
 
     def obter(self, id_inscricao):

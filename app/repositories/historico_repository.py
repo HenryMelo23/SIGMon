@@ -26,12 +26,6 @@ class HistoricoRepository:
             cursor.execute(_JOIN + "WHERE h.id_estudante = %s ORDER BY h.semestre DESC", (id_estudante,))
             return [HistoricoEscolar(*row) for row in cursor.fetchall()]
 
-    def list_pendentes(self):
-        with get_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute(_JOIN + "WHERE h.status = 'PENDENTE' ORDER BY h.data_cadastro")
-            return [HistoricoEscolar(*row) for row in cursor.fetchall()]
-
     def list_by_status(self, status):
         with get_connection() as conn:
             cursor = conn.cursor()

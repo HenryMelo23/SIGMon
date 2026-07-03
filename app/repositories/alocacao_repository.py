@@ -89,21 +89,12 @@ class AlocacaoRepository:
             )
             conn.commit()
 
-    def reativar_por_candidatura(self, id_candidatura):
+    def update_status_por_candidatura(self, id_candidatura, status):
         with get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                "UPDATE alocacoes_monitores SET status = 'ATIVA' WHERE id_candidatura = %s",
-                (id_candidatura,)
-            )
-            conn.commit()
-
-    def encerrar_por_candidatura(self, id_candidatura):
-        with get_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                "UPDATE alocacoes_monitores SET status = 'ENCERRADA' WHERE id_candidatura = %s",
-                (id_candidatura,)
+                "UPDATE alocacoes_monitores SET status = %s WHERE id_candidatura = %s",
+                (status, id_candidatura)
             )
             conn.commit()
 

@@ -80,7 +80,7 @@ class CandidaturaService:
             UsuarioRepository().mudar_papel(candidatura.id_estudante, "MONITOR")
             alocacao_repo = AlocacaoRepository()
             if alocacao_repo.find_by_candidatura(candidatura_id):
-                alocacao_repo.reativar_por_candidatura(candidatura_id)
+                alocacao_repo.update_status_por_candidatura(candidatura_id, "ATIVA")
             else:
                 alocacao_repo.create({
                     "id_candidatura": candidatura_id,
@@ -96,5 +96,5 @@ class CandidaturaService:
         else:
             if candidatura.status == "APROVADA":
                 UsuarioRepository().mudar_papel(candidatura.id_estudante, "ESTUDANTE")
-                AlocacaoRepository().encerrar_por_candidatura(candidatura_id)
+                AlocacaoRepository().update_status_por_candidatura(candidatura_id, "ENCERRADA")
             self.repo.update_status(candidatura_id, status)

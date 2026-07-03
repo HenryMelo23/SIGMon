@@ -10,7 +10,7 @@ class HistoricoService:
         if usuario.papel == "ADMINISTRADOR":
             if filtro == "aprovado":
                 return self.repo.list_by_status("APROVADO")
-            return self.repo.list_pendentes()
+            return self.repo.list_by_status("PENDENTE")
         return self.repo.list_by_estudante(usuario.id_usuario)
 
     def listar_aprovadas(self, id_estudante):

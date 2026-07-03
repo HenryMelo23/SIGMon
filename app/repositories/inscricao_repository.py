@@ -30,12 +30,6 @@ class InscricaoRepository:
             )
             return [InscricaoTurma(*row) for row in cursor.fetchall()]
 
-    def list_pendentes(self):
-        with get_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute(_JOIN + "WHERE i.status = 'PENDENTE' ORDER BY i.data_cadastro")
-            return [InscricaoTurma(*row) for row in cursor.fetchall()]
-
     def list_by_status(self, status):
         with get_connection() as conn:
             cursor = conn.cursor()
