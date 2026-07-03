@@ -5,7 +5,6 @@ from app.repositories.alocacao_repository import AlocacaoRepository
 from app.repositories.avaliacao_repository import AvaliacaoRepository
 from app.repositories.candidatura_repository import CandidaturaRepository
 from app.repositories.edital_repository import EditalRepository
-from app.repositories.frequencia_repository import FrequenciaRepository
 from app.repositories.sessao_repository import SessaoRepository
 from app.utils.decorators import current_user, login_required
 
@@ -20,7 +19,6 @@ def index():
     candidaturas_pendentes = CandidaturaRepository().count_pendentes()
     alocacoes_ativas = AlocacaoRepository().count_ativos()
     sessoes_agendadas = SessaoRepository().count_nao_realizadas()
-    frequencias_pendentes = FrequenciaRepository().count_nao_validadas()
     total_avaliacoes = AvaliacaoRepository().count_all()
     stats = [
         {
@@ -56,14 +54,6 @@ def index():
             "action_label": "Ver sessões",
         },
         {
-            "label": "Frequências pendentes",
-            "value": frequencias_pendentes,
-            "description": "Registros aguardando validação",
-            "icon": "✓",
-            "endpoint": "frequencias.index" if usuario.papel in {"MONITOR", "PROFESSOR", "FINANCEIRO", "ADMINISTRADOR"} else None,
-            "action_label": "Ver registros",
-        },
-        {
             "label": "Avaliações recebidas",
             "value": total_avaliacoes,
             "description": "Feedbacks de tutorias",
@@ -80,22 +70,18 @@ def index():
         ],
         "MONITOR": [
             ("Criar horário", "agenda.novo", "Abrir agenda de atendimento"),
-            ("Registrar frequência", "frequencias.nova", "Enviar atividade realizada"),
+            ("Ver sessões", "sessoes.index", "Acompanhar atendimentos"),
             ("Ver avaliações", "avaliacoes.index", "Acompanhar feedbacks recebidos"),
         ],
         "PROFESSOR": [
             ("Analisar candidaturas", "candidaturas.index", "Atualizar status dos estudantes"),
-            ("Validar frequências", "frequencias.index", "Conferir atividades de monitores"),
             ("Ver turmas", "turmas.index", "Acompanhar turmas vinculadas"),
+            ("Ver avaliações", "avaliacoes.index", "Acompanhar feedbacks dos monitores"),
         ],
         "ADMINISTRADOR": [
             ("Novo edital", "editais.form", "Publicar processo de monitoria"),
             ("Gerenciar usuários", "usuarios.index", "Manter perfis e permissões"),
             ("Criar disciplina", "disciplinas.form", "Atualizar catálogo do CIC"),
-        ],
-        "FINANCEIRO": [
-            ("Ver monitores ativos", "financeiro.index", "Consultar dados para pagamento"),
-            ("Frequências validadas", "frequencias.index", "Conferir registros aprovados"),
         ],
     }
     return render_template(
@@ -104,5 +90,4 @@ def index():
         quick_actions=quick_actions.get(usuario.papel, []),
         slots=AgendaRepository().list_all(),
         usuario=usuario,
-        frequencias_pendentes=frequencias_pendentes,
     )

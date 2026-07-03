@@ -3,16 +3,7 @@
 {% block page_heading %}Dashboard{% endblock %}
 {% block page_subtitle %}Visão operacional adaptada ao perfil {{ role_labels[current_user.papel] }}{% endblock %}
 {% block content %}
-{% if current_user.papel == "PROFESSOR" and frequencias_pendentes %}
-<section class="notice notice-warning">
-  <div>
-    <span class="section-kicker">Pendência</span>
-    <strong>Há {{ frequencias_pendentes}} registro(s) de frequência aguardando validação.</strong>
-    <small>Valide as atividades dos monitores antes de fechar o acompanhamento acadêmico.</small>
-  </div>
-  <a class="btn btn-warning" href="{{ url_for('frequencias.index') }}">Validar agora</a>
-</section>
-{% endif %}
+
 <div class="grid metrics">
   {% for item in stats %}
     {% set label = item.label %}

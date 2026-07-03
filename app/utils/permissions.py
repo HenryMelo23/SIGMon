@@ -3,11 +3,10 @@ ROLE_LABELS = {
     "MONITOR": "Monitor",
     "PROFESSOR": "Professor",
     "ADMINISTRADOR": "Administrador",
-    "FINANCEIRO": "Financeiro",
 }
 
 MENU_ITEMS = [
-    ("Dashboard", "dashboard.index", {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR", "FINANCEIRO"}),
+    ("Dashboard", "dashboard.index", {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR"}),
     ("Usuários", "usuarios.index", {"ADMINISTRADOR"}),
     ("Departamentos", "departamentos.index", {"ADMINISTRADOR"}),
     ("Disciplinas", "disciplinas.index", {"ADMINISTRADOR"}),
@@ -15,15 +14,13 @@ MENU_ITEMS = [
     ("Turmas", "turmas.index", {"PROFESSOR", "ADMINISTRADOR"}),
     ("Histórico Escolar", "historico.index", {"ESTUDANTE", "MONITOR", "ADMINISTRADOR"}),
     ("Inscrições em Turmas", "inscricoes.index", {"ESTUDANTE", "MONITOR", "ADMINISTRADOR"}),
-    ("Editais", "editais.index", {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR", "FINANCEIRO"}),
+    ("Editais", "editais.index", {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR"}),
     ("Candidaturas", "candidaturas.index", {"PROFESSOR", "ADMINISTRADOR"}),
     ("Minhas candidaturas", "candidaturas.minhas", {"ESTUDANTE", "MONITOR"}),
     ("Alocações", "alocacoes.index", {"MONITOR", "PROFESSOR", "ADMINISTRADOR"}),
     ("Agenda", "agenda.index", {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR"}),
     ("Sessões", "sessoes.index", {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR"}),
-    ("Frequências", "frequencias.index", {"MONITOR", "PROFESSOR", "FINANCEIRO", "ADMINISTRADOR"}),
     ("Avaliações", "avaliacoes.index", {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR"}),
-    ("Financeiro", "financeiro.index", {"FINANCEIRO", "ADMINISTRADOR"}),
 ]
 
 
