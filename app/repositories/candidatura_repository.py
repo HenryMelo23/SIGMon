@@ -1,6 +1,15 @@
 from app.database.db import get_connection
 from app.models.candidatura import Candidatura
 
+_JOIN = """
+    SELECT c.*, u.nome AS estudante_nome, t.codigo_turma, d.nome AS disciplina_nome
+    FROM candidaturas c
+    JOIN usuarios u ON c.id_estudante = u.id_usuario
+    JOIN turmas t ON c.id_turma = t.id_turma
+    JOIN disciplinas d ON t.id_disciplina = d.id_disciplina
+    JOIN editais e ON c.id_edital = e.id_edital
+"""
+
 
 class CandidaturaRepository:
     def count_pendentes(self):
@@ -62,19 +71,7 @@ class CandidaturaRepository:
                 conditions.append("c.status = %s")
                 params.append(status)
             where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
-            cursor.execute(
-                f"""
-                SELECT c.*, u.nome AS estudante_nome, t.codigo_turma, d.nome AS disciplina_nome
-                FROM candidaturas c
-                JOIN usuarios u ON c.id_estudante = u.id_usuario
-                JOIN turmas t ON c.id_turma = t.id_turma
-                JOIN disciplinas d ON t.id_disciplina = d.id_disciplina
-                JOIN editais e ON c.id_edital = e.id_edital
-                {where}
-                ORDER BY c.data_inscricao DESC
-                """,
-                params
-            )
+            cursor.execute(f"{_JOIN}{where} ORDER BY c.data_inscricao DESC", params)
             return [Candidatura(*row) for row in cursor.fetchall()]
 
     def list_by_estudante(self, id_estudante, semestre=None, status=None):
@@ -89,19 +86,7 @@ class CandidaturaRepository:
                 conditions.append("c.status = %s")
                 params.append(status)
             where = "WHERE " + " AND ".join(conditions)
-            cursor.execute(
-                f"""
-                SELECT c.*, u.nome AS estudante_nome, t.codigo_turma, d.nome AS disciplina_nome
-                FROM candidaturas c
-                JOIN usuarios u ON c.id_estudante = u.id_usuario
-                JOIN turmas t ON c.id_turma = t.id_turma
-                JOIN disciplinas d ON t.id_disciplina = d.id_disciplina
-                JOIN editais e ON c.id_edital = e.id_edital
-                {where}
-                ORDER BY c.data_inscricao DESC
-                """,
-                params
-            )
+            cursor.execute(f"{_JOIN}{where} ORDER BY c.data_inscricao DESC", params)
             return [Candidatura(*row) for row in cursor.fetchall()]
 
     def list_by_professor(self, id_professor, semestre=None, status=None):
@@ -116,19 +101,7 @@ class CandidaturaRepository:
                 conditions.append("c.status = %s")
                 params.append(status)
             where = "WHERE " + " AND ".join(conditions)
-            cursor.execute(
-                f"""
-                SELECT c.*, u.nome AS estudante_nome, t.codigo_turma, d.nome AS disciplina_nome
-                FROM candidaturas c
-                JOIN usuarios u ON c.id_estudante = u.id_usuario
-                JOIN turmas t ON c.id_turma = t.id_turma
-                JOIN disciplinas d ON t.id_disciplina = d.id_disciplina
-                JOIN editais e ON c.id_edital = e.id_edital
-                {where}
-                ORDER BY c.data_inscricao DESC
-                """,
-                params
-            )
+            cursor.execute(f"{_JOIN}{where} ORDER BY c.data_inscricao DESC", params)
             return [Candidatura(*row) for row in cursor.fetchall()]
 
     def count_aprovadas_turma(self, id_turma, semestre):
@@ -174,17 +147,7 @@ class CandidaturaRepository:
     def get_by_id(self, id_candidatura):
         with get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute(
-                """
-                SELECT c.*, u.nome AS estudante_nome, t.codigo_turma, d.nome AS disciplina_nome
-                FROM candidaturas c
-                JOIN usuarios u ON c.id_estudante = u.id_usuario
-                JOIN turmas t ON c.id_turma = t.id_turma
-                JOIN disciplinas d ON t.id_disciplina = d.id_disciplina
-                WHERE c.id_candidatura = %s
-                """,
-                (id_candidatura,)
-            )
+            cursor.execute(_JOIN + "WHERE c.id_candidatura = %s", (id_candidatura,))
             row = cursor.fetchone()
             return Candidatura(*row) if row else None
 
