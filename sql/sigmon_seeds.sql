@@ -27,7 +27,7 @@ INSERT INTO usuarios (id_usuario, id_departamento, nome, email, matricula, papel
 (2, 1, 'Prof. Rafael Nogueira', 'professor@unb.br',   'DOC742',    'PROFESSOR',     '123456', TRUE, '2026-01-11'),
 (3, 1, 'Prof. Mariana Costa',   'mariana@unb.br',     'DOC801',    'PROFESSOR',     '123456', TRUE, '2026-01-15'),
 (4, 1, 'Luisa Carvalho',        'estudante@unb.br',   '231045678', 'ESTUDANTE',     '123456', TRUE, '2026-02-02'),
-(5, 1, 'Camila Rocha',          'financeiro@unb.br',  'FIN018',    'FINANCEIRO',    '123456', TRUE, '2026-01-20'),
+(5, 1, 'Camila Rocha',          'camila@unb.br',      '230091234', 'ESTUDANTE',     '123456', TRUE, '2026-01-20'),
 (6, 1, 'Mateus Henrique Lima',  'monitor@unb.br',     '211098765', 'MONITOR',       '123456', TRUE, '2026-02-08'),
 (7, 1, 'Beatriz Oliveira',      'beatriz@unb.br',     '220034512', 'MONITOR',       '123456', TRUE, '2026-02-10'),
 (8, 1, 'Pedro Alves',           'pedro@unb.br',       '230078934', 'ESTUDANTE',     '123456', TRUE, '2026-02-12');
@@ -130,6 +130,20 @@ INSERT INTO historico_escolar (id_historico, id_estudante, id_disciplina, id_doc
 SELECT setval('historico_escolar_id_historico_seq', 8);
 
 -- ============================================================
+-- INSCRICOES_TURMAS (3 registros)
+-- Luisa (4) em BD T01 -> ve slots do Mateus
+-- Pedro (8) em ED T01 -> ve slots da Beatriz
+-- Mateus (6) em ED T01 como estudante -> ve slots da Beatriz tambem
+-- ============================================================
+
+INSERT INTO inscricoes_turmas (id_inscricao, id_estudante, id_turma, id_documento, status, justificativa, data_cadastro) VALUES
+(1, 4, 1, NULL, 'APROVADA', NULL, '2026-02-10'),
+(2, 8, 2, NULL, 'APROVADA', NULL, '2026-02-12'),
+(3, 6, 2, NULL, 'APROVADA', NULL, '2026-02-08');
+
+SELECT setval('inscricoes_turmas_id_inscricao_seq', 3);
+
+-- ============================================================
 -- CANDIDATURAS (8 registros)
 -- 1,2: APROVADA no edital 2 (encerrado) -> geraram Mateus e Beatriz como monitores
 -- 3,4: EM_ANALISE/INSCRITA no edital 1 (aberto) - Pedro e Luisa
@@ -162,19 +176,6 @@ INSERT INTO alocacoes_monitores (id_alocacao, id_candidatura, id_monitor, id_dis
 (2, 2, 7, 2, 2, 2, '2026-05-01', '2026-11-30', 12, 'ATIVA');
 
 SELECT setval('alocacoes_monitores_id_alocacao_seq', 2);
-
--- ============================================================
--- DADOS_BANCARIOS (5 registros)
--- ============================================================
-
-INSERT INTO dados_bancarios (id_dado_bancario, id_usuario, banco, agencia, conta, tipo_conta, chave_pix, atualizado_em) VALUES
-(1, 6, 'Banco do Brasil', '3602-1', '128934-5', 'CORRENTE', 'mateus.lima@aluno.unb.br',  '2026-05-02'),
-(2, 7, 'Caixa Economica', '0421-8', '993421-0', 'POUPANCA', 'beatriz.oliveira@unb.br',   '2026-05-03'),
-(3, 4, 'Bradesco',        '1234-5', '567890-1', 'CORRENTE', '231045678',                  '2026-05-04'),
-(4, 8, 'Itau',            '9876-3', '112233-4', 'CORRENTE', 'pedro.alves@aluno.unb.br',  '2026-05-05'),
-(5, 5, 'Nubank',          '0001-9', '445566-7', 'CORRENTE', 'camila.financeiro@unb.br',  '2026-05-06');
-
-SELECT setval('dados_bancarios_id_dado_bancario_seq', 5);
 
 -- ============================================================
 -- AGENDA_SLOTS (5 registros)
@@ -212,7 +213,6 @@ INSERT INTO avaliacoes_tutoria (id_avaliacao, id_sessao, id_estudante, nota, com
 (1, 1, 4, 5, 'Atendimento muito claro e objetivo.',            '2026-07-07'),
 (2, 2, 4, 5, 'Excelente explicacao sobre SQL Joins.',          '2026-07-09'),
 (3, 3, 8, 4, 'Boa explicacao, poderia ter mais exemplos.',     '2026-07-08'),
-(4, 4, 8, 4, 'Bom atendimento, conteudo bem explicado.',       '2026-07-10'),
-(5, 1, 8, 5, 'Monitor muito preparado e didatico.',            '2026-07-07');
+(4, 4, 8, 4, 'Bom atendimento, conteudo bem explicado.',       '2026-07-10');
 
-SELECT setval('avaliacoes_tutoria_id_avaliacao_seq', 5);
+SELECT setval('avaliacoes_tutoria_id_avaliacao_seq', 4);
