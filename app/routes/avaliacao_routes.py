@@ -20,6 +20,7 @@ def index():
             "avaliacoes/list.html",
             recebidas=service.listar_recebidas(usuario.id_usuario),
             feitas=service.listar_feitas(usuario.id_usuario),
+            resumo=service.resumo_monitor(usuario.id_usuario),
         )
     return render_template("avaliacoes/list.html", avaliacoes=service.listar(usuario))
 

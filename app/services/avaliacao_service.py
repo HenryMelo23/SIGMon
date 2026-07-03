@@ -20,6 +20,9 @@ class AvaliacaoService:
     def listar_recebidas(self, id_monitor):
         return self.repo.list_recebidas_monitor(id_monitor)
 
+    def resumo_monitor(self, id_monitor):
+        return self.repo.list_resumo_monitor(id_monitor)
+
     def listar_feitas(self, id_monitor):
         return self.repo.list_by_estudante(id_monitor)
 

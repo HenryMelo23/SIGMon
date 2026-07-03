@@ -82,6 +82,20 @@ class AvaliacaoRepository:
             )
             return cursor.fetchone() is not None
 
+    def list_resumo_monitor(self, id_monitor):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """SELECT disciplina, media_nota, total_avaliacoes
+                   FROM vw_avaliacoes_monitoria
+                   WHERE id_usuario = %s""",
+                (id_monitor,)
+            )
+            return [
+                {"disciplina": row[0], "media_nota": row[1], "total_avaliacoes": row[2]}
+                for row in cursor.fetchall()
+            ]
+
     def create(self, payload):
         with get_connection() as conn:
             cursor = conn.cursor()
