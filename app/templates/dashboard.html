@@ -49,8 +49,8 @@
           <td>{{ slot.data_slot }}</td>
           <td>{{ slot.hora_inicio }}-{{ slot.hora_fim }}</td>
           <td>
-            {% if slot.local_atendimento.startswith("http://") or slot.local_atendimento.startswith("https://") %}
-              <a class="table-link" href="{{ slot.local_atendimento }}" target="_blank" rel="noopener">Abrir link</a>
+            {% if slot.modalidade == "ONLINE" %}
+              Online
             {% else %}
               {{ slot.local_atendimento }}
             {% endif %}

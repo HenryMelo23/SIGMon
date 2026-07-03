@@ -65,6 +65,15 @@ class AgendaRepository:
             )
             return [AgendaSlot(*row) for row in cursor.fetchall()]
 
+    def list_by_professor(self, id_professor):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                _JOIN + "WHERE a.id_professor = %s ORDER BY s.data_slot, s.hora_inicio",
+                (id_professor,)
+            )
+            return [AgendaSlot(*row) for row in cursor.fetchall()]
+
     def list_disponiveis(self):
         with get_connection() as conn:
             cursor = conn.cursor()

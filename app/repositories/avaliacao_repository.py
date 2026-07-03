@@ -25,6 +25,21 @@ class AvaliacaoRepository:
             cursor.execute("SELECT COUNT(*) FROM avaliacoes_tutoria")
             return cursor.fetchone()[0]
 
+    def count_recebidas_monitor(self, id_monitor):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                SELECT COUNT(*) FROM avaliacoes_tutoria av
+                JOIN sessoes_tutoria st ON av.id_sessao = st.id_sessao
+                JOIN agenda_slots ag ON st.id_slot = ag.id_slot
+                JOIN alocacoes_monitores am ON ag.id_alocacao = am.id_alocacao
+                WHERE am.id_monitor = %s
+                """,
+                (id_monitor,)
+            )
+            return cursor.fetchone()[0]
+
     def list_all(self):
         with get_connection() as conn:
             cursor = conn.cursor()
