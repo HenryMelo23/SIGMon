@@ -16,13 +16,11 @@ CREATE EXTENSION IF NOT EXISTS unaccent;
 -- ============================================================
 
 DROP TABLE IF EXISTS avaliacoes_tutoria     CASCADE;
-DROP TABLE IF EXISTS registros_frequencia   CASCADE;
 DROP TABLE IF EXISTS sessoes_tutoria        CASCADE;
 DROP TABLE IF EXISTS agenda_slots           CASCADE;
 DROP TABLE IF EXISTS inscricoes_turmas      CASCADE;
 DROP TABLE IF EXISTS historico_escolar      CASCADE;
 DROP TABLE IF EXISTS documentos_anexos      CASCADE;
-DROP TABLE IF EXISTS dados_bancarios        CASCADE;
 DROP TABLE IF EXISTS alocacoes_monitores    CASCADE;
 DROP TABLE IF EXISTS candidaturas           CASCADE;
 DROP TABLE IF EXISTS editais                CASCADE;
@@ -51,7 +49,7 @@ CREATE TABLE usuarios (
     email           VARCHAR(150) NOT NULL UNIQUE,
     matricula       VARCHAR(30)  UNIQUE,
     papel           VARCHAR(20)  NOT NULL CHECK (
-                        papel IN ('ESTUDANTE', 'MONITOR', 'PROFESSOR', 'ADMINISTRADOR', 'FINANCEIRO')
+                        papel IN ('ESTUDANTE', 'MONITOR', 'PROFESSOR', 'ADMINISTRADOR')
                     ),
     senha_hash      VARCHAR(255),
     ativo           BOOLEAN      NOT NULL DEFAULT TRUE,
@@ -132,17 +130,6 @@ CREATE TABLE alocacoes_monitores (
     CHECK (data_fim >= data_inicio)
 );
 
-CREATE TABLE dados_bancarios (
-    id_dado_bancario SERIAL PRIMARY KEY,
-    id_usuario       INTEGER      NOT NULL UNIQUE REFERENCES usuarios(id_usuario),
-    banco            VARCHAR(80)  NOT NULL,
-    agencia          VARCHAR(20)  NOT NULL,
-    conta            VARCHAR(30)  NOT NULL,
-    tipo_conta       VARCHAR(20)  CHECK (tipo_conta IN ('CORRENTE', 'POUPANCA')),
-    chave_pix        VARCHAR(150),
-    atualizado_em    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
 -- Armazena documentos binarios (PDF, imagens) vinculados a usuarios, editais ou candidaturas.
 -- O campo conteudo usa BYTEA para armazenar o arquivo diretamente no banco.
 CREATE TABLE documentos_anexos (
@@ -202,16 +189,6 @@ CREATE TABLE sessoes_tutoria (
     assunto         VARCHAR(180) NOT NULL,
     realizada       BOOLEAN      NOT NULL DEFAULT FALSE,
     data_registro   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE registros_frequencia (
-    id_frequencia          SERIAL PRIMARY KEY,
-    id_alocacao            INTEGER      NOT NULL REFERENCES alocacoes_monitores(id_alocacao),
-    data_atividade         DATE         NOT NULL,
-    horas                  NUMERIC(4,2) NOT NULL CHECK (horas > 0),
-    descricao              TEXT         NOT NULL,
-    validado               BOOLEAN      NOT NULL DEFAULT FALSE,
-    id_professor_validador INTEGER      REFERENCES usuarios(id_usuario)
 );
 
 CREATE TABLE avaliacoes_tutoria (

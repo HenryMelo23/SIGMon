@@ -205,19 +205,6 @@ INSERT INTO sessoes_tutoria (id_sessao, id_slot, id_estudante, assunto, realizad
 SELECT setval('sessoes_tutoria_id_sessao_seq', 5);
 
 -- ============================================================
--- REGISTROS_FREQUENCIA (5 registros)
--- ============================================================
-
-INSERT INTO registros_frequencia (id_frequencia, id_alocacao, data_atividade, horas, descricao, validado, id_professor_validador) VALUES
-(1, 1, '2026-07-07', 2.0, 'Atendimento sobre modelagem ER e normalizacao.',    TRUE,  2),
-(2, 1, '2026-07-09', 1.5, 'Preparacao de material de apoio para SQL.',         TRUE,  2),
-(3, 2, '2026-07-08', 2.0, 'Atendimento sobre estruturas de arvore.',           TRUE,  2),
-(4, 2, '2026-07-10', 2.0, 'Atendimento sobre listas ligadas.',                 FALSE, NULL),
-(5, 1, '2026-07-14', 1.0, 'Preparacao de lista de exercicios.',                FALSE, NULL);
-
-SELECT setval('registros_frequencia_id_frequencia_seq', 5);
-
--- ============================================================
 -- AVALIACOES_TUTORIA (5 registros)
 -- ============================================================
 
