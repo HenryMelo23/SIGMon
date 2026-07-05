@@ -66,10 +66,16 @@ class TurmaRepository:
             return cursor.fetchone()[0] > 0
 
     def tem_alocacoes(self, id_turma):
-      with get_connection() as conn:
-          cursor = conn.cursor()
-          cursor.execute("SELECT COUNT(*) FROM alocacoes_monitores WHERE id_turma = %s", (id_turma,))
-          return cursor.fetchone()[0] > 0
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM alocacoes_monitores WHERE id_turma = %s", (id_turma,))
+            return cursor.fetchone()[0] > 0
+
+    def tem_candidaturas(self, id_turma):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM candidaturas WHERE id_turma = %s", (id_turma,))
+            return cursor.fetchone()[0] > 0
     
     
     def find_duplicata(self, id_disciplina, semestre, codigo_turma):

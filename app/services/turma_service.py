@@ -53,6 +53,8 @@ class TurmaService:
         return self.repo.update(turma_id, payload) if turma_id else self.repo.create(payload)
 
     def remover(self, id):
-      if self.repo.tem_alocacoes(id):
-          raise BusinessError("Não é possível remover uma turma que possui alocações vinculadas.")
-      return self.repo.delete(id)
+        if self.repo.tem_candidaturas(id):
+            raise BusinessError("Não é possível remover uma turma que possui candidaturas vinculadas.")
+        if self.repo.tem_alocacoes(id):
+            raise BusinessError("Não é possível remover uma turma que possui alocações vinculadas.")
+        return self.repo.delete(id)

@@ -26,4 +26,6 @@ class HorarioService:
         return self.repo.update(horario_id, payload) if horario_id else self.repo.create(payload)
 
     def remover(self, id):
+        if self.repo.tem_turmas(id):
+            raise BusinessError("Não é possível remover um horário que possui turmas vinculadas.")
         return self.repo.delete(id)

@@ -62,6 +62,12 @@ class HorarioRepository:
             row = cursor.fetchone()
             return Horario(*row)
 
+    def tem_turmas(self, id_horario):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM turmas WHERE id_horario = %s", (id_horario,))
+            return cursor.fetchone()[0] > 0
+
     def delete(self, id_horario):
         with get_connection() as conn:
             cursor = conn.cursor()
