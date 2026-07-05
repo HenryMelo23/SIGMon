@@ -21,3 +21,5 @@ JOIN agenda_slots ag        ON ag.id_alocacao  = am.id_alocacao
 JOIN sessoes_tutoria st     ON st.id_slot      = ag.id_slot
 JOIN avaliacoes_tutoria av  ON av.id_sessao    = st.id_sessao
 GROUP BY u.id_usuario, u.nome, d.nome;
+
+GRANT SELECT ON vw_avaliacoes_monitoria TO sigmon_user;

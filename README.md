@@ -140,8 +140,9 @@ Todos usam a senha `123456`.
 | Administrador | Ana Beatriz | admin@unb.br |
 | Professor | Prof. Maristela | maristela@unb.br |
 | Professor | Prof. Caetano | caetano@unb.br |
-| Monitor | Carlos Lima | monitor@unb.br |
+| Monitor | Rafael Mendes | monitor@unb.br |
 | Estudante | Pedro Alves | estudante@unb.br |
+| Estudante | Amanda Silva | amanda@unb.br |
 
 ## Estrutura do projeto
 
