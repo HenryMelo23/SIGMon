@@ -18,7 +18,7 @@ class TurmaRepository:
             cursor.execute(
                 """
                 SELECT t.id_turma, t.id_disciplina, t.id_professor, t.semestre, t.codigo_turma,
-                       t.id_horario, t.sala, t.vagas_monitor,
+                       t.id_horario, t.sala, t.vagas_monitor, t.carga_horaria_semanal,
                        d.nome AS disciplina_nome, u.nome AS professor_nome,
                        h.codigo AS horario_codigo, he.mencao AS mencao_estudante,
                        t.vagas_monitor - (
