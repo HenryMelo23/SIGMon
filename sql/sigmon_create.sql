@@ -209,3 +209,10 @@ CREATE TABLE auditoria (
     detalhes     TEXT,
     criado_em    TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+-- ============================================================
+-- PERMISSOES
+-- ============================================================
+
+GRANT ALL ON ALL TABLES    IN SCHEMA public TO sigmon_user;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO sigmon_user;
