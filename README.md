@@ -61,7 +61,9 @@ DATABASE_URL=postgresql://sigmon_user:senha@localhost:5432/sigmon
 
 ### 4. Configure o banco de dados
 
-Crie o banco e o usuário no PostgreSQL:
+#### Linux/Mac
+
+Crie o banco e o usuário:
 
 ```bash
 sudo -u postgres psql
@@ -76,15 +78,40 @@ GRANT ALL ON SCHEMA public TO sigmon_user;
 \q
 ```
 
-Execute os scripts SQL:
+Execute os scripts SQL na ordem abaixo (os GRANTs ao `sigmon_user` já estão incluídos no `sigmon_create.sql`):
 
 ```bash
-sudo cp sql/sigmon_create.sql /tmp/
-sudo cp sql/sigmon_seeds.sql /tmp/
-sudo -u postgres psql -d sigmon -f /tmp/sigmon_create.sql
-sudo -u postgres psql -d sigmon -f /tmp/sigmon_seeds.sql
-sudo -u postgres psql -d sigmon -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO sigmon_user; GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO sigmon_user;"
+sudo -u postgres psql -d sigmon -f sql/sigmon_create.sql
+sudo -u postgres psql -d sigmon -f sql/sigmon_procedures.sql
+sudo -u postgres psql -d sigmon -f sql/sigmon_views.sql
+sudo -u postgres psql -d sigmon -f sql/sigmon_triggers.sql
+sudo -u postgres psql -d sigmon -f sql/sigmon_seeds.sql
 ```
+
+#### Windows
+
+Abra o **psql** (instalado junto com o PostgreSQL) e crie o banco e o usuário:
+
+```sql
+CREATE DATABASE sigmon;
+CREATE USER sigmon_user WITH PASSWORD 'senha';
+GRANT ALL PRIVILEGES ON DATABASE sigmon TO sigmon_user;
+\c sigmon
+GRANT ALL ON SCHEMA public TO sigmon_user;
+\q
+```
+
+Execute os scripts SQL pelo **cmd** ou **PowerShell** a partir da raiz do projeto (ajuste o caminho do `psql` se necessário):
+
+```powershell
+psql -U postgres -d sigmon -f sql/sigmon_create.sql
+psql -U postgres -d sigmon -f sql/sigmon_procedures.sql
+psql -U postgres -d sigmon -f sql/sigmon_views.sql
+psql -U postgres -d sigmon -f sql/sigmon_triggers.sql
+psql -U postgres -d sigmon -f sql/sigmon_seeds.sql
+```
+
+> No Windows o `psql` normalmente fica em `C:\Program Files\PostgreSQL\<versao>\bin\psql.exe`. Adicione essa pasta ao PATH ou execute os comandos de dentro dela.
 
 ### 5. Rode a aplicação
 
@@ -108,13 +135,13 @@ $env:PORT=5001; python run.py
 
 Todos usam a senha `123456`.
 
-| Perfil | E-mail |
-|---|---|
-| Administrador | admin@unb.br |
-| Professor | professor@unb.br |
-| Estudante | estudante@unb.br |
-| Monitor | monitor@unb.br |
-| Financeiro | financeiro@unb.br |
+| Perfil | Nome | E-mail |
+|---|---|---|
+| Administrador | Ana Beatriz | admin@unb.br |
+| Professor | Prof. Maristela | maristela@unb.br |
+| Professor | Prof. Caetano | caetano@unb.br |
+| Monitor | Carlos Lima | monitor@unb.br |
+| Estudante | Pedro Alves | estudante@unb.br |
 
 ## Estrutura do projeto
 
@@ -141,8 +168,7 @@ run.py             Entrada da aplicação
 
 | Perfil | Acesso |
 |---|---|
-| Estudante | Editais abertos, candidaturas, agenda, sessões e avaliações |
-| Monitor | Alocação própria, agenda, sessões, frequência e avaliações |
-| Professor | Turmas, candidaturas, alocações e validação de frequência |
-| Administrador | Cadastros completos, editais, candidaturas e alocações |
-| Financeiro | Monitores ativos, dados bancários e frequências validadas |
+| Estudante | Editais abertos, histórico escolar, candidaturas, agenda, sessões e avaliações |
+| Monitor | Alocação própria, agenda, sessões e avaliações recebidas |
+| Professor | Turmas, candidaturas e alocações |
+| Administrador | Cadastros completos (usuários, disciplinas, horários, departamentos), editais, histórico e inscrições |
