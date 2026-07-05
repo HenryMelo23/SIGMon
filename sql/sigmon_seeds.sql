@@ -92,29 +92,26 @@ INSERT INTO editais (id_edital, id_departamento, titulo, descricao, semestre, da
 SELECT setval('editais_id_edital_seq', 2);
 
 -- ============================================================
--- DOCUMENTOS_ANEXOS (2)
+-- DOCUMENTOS_ANEXOS (1)
 -- 1: historico de Rafael para BD
--- 2: historico de Amanda para BD
 -- ============================================================
 
 INSERT INTO documentos_anexos (id_documento, id_usuario, id_edital, id_candidatura, nome_arquivo, tipo_documento, mime_type, conteudo, data_upload) VALUES
-(1, 4, NULL, NULL, 'historico_rafael.pdf', 'Historico Escolar', 'application/pdf', decode('255044462d312e34', 'hex'), '2025-09-01'),
-(2, 6, NULL, NULL, 'historico_amanda.pdf', 'Historico Escolar', 'application/pdf', decode('255044462d312e34', 'hex'), '2025-09-01');
+(1, 4, NULL, NULL, 'historico_rafael.pdf', 'Historico Escolar', 'application/pdf', decode('255044462d312e34', 'hex'), '2025-09-01');
 
-SELECT setval('documentos_anexos_id_documento_seq', 2);
+SELECT setval('documentos_anexos_id_documento_seq', 1);
 
 -- ============================================================
--- HISTORICO_ESCOLAR (2)
+-- HISTORICO_ESCOLAR (1)
 -- Rafael: BD SS 2025.1 APROVADO (qualifica para ser monitor de BD)
--- Amanda: BD MS 2025.1 APROVADO (qualifica para se inscrever na turma)
+-- Amanda: sem historico — ela e aluna de BD T01 em 2026.1, nao faz sentido ter BD aprovado
 -- Pedro: sem historico — vai cadastrar ao vivo durante a apresentacao
 -- ============================================================
 
 INSERT INTO historico_escolar (id_historico, id_estudante, id_disciplina, id_documento, mencao, semestre, status, justificativa, data_cadastro) VALUES
-(1, 4, 1, 1, 'SS', '2025.1', 'APROVADO', NULL, '2025-09-01'),
-(2, 6, 1, 2, 'MS', '2025.1', 'APROVADO', NULL, '2025-09-01');
+(1, 4, 1, 1, 'SS', '2025.1', 'APROVADO', NULL, '2025-09-01');
 
-SELECT setval('historico_escolar_id_historico_seq', 2);
+SELECT setval('historico_escolar_id_historico_seq', 1);
 
 -- ============================================================
 -- INSCRICOES_TURMAS (1)
