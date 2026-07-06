@@ -1,5 +1,6 @@
 from app.repositories.agenda_repository import AgendaRepository
 from app.repositories.alocacao_repository import AlocacaoRepository
+from app.repositories.inscricao_turma_repository import InscricaoTurmaRepository
 from app.repositories.sessao_repository import SessaoRepository
 from app.utils.validators import BusinessError
 
@@ -34,7 +35,9 @@ class AgendaService:
         alocacao = self.alocacoes.get_by_id(slot.id_alocacao)
         if alocacao and estudante.papel == "MONITOR" and alocacao.id_monitor == estudante.id_usuario:
             raise BusinessError("Monitor nao pode reservar o proprio horario de atendimento.")
-        slot.reservado = True
+        if alocacao and not InscricaoTurmaRepository().find_aprovada(estudante.id_usuario, alocacao.id_turma):
+            raise BusinessError("E necessario ter inscricao aprovada na turma antes de reservar atendimento.")
+        self.repo.update(slot.id_slot, {"reservado": True})
         return self.sessoes.create(
             {
                 "id_slot": slot.id_slot,

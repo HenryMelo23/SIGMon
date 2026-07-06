@@ -25,6 +25,7 @@ DROP TABLE IF EXISTS dados_bancarios        CASCADE;
 DROP TABLE IF EXISTS alocacoes_monitores    CASCADE;
 DROP TABLE IF EXISTS candidaturas           CASCADE;
 DROP TABLE IF EXISTS editais                CASCADE;
+DROP TABLE IF EXISTS inscricoes_turmas      CASCADE;
 DROP TABLE IF EXISTS turmas                 CASCADE;
 DROP TABLE IF EXISTS horarios               CASCADE;
 DROP TABLE IF EXISTS disciplinas            CASCADE;
@@ -95,6 +96,17 @@ CREATE TABLE editais (
     data_fim          DATE          NOT NULL,
     nota_minima       VARCHAR(2)    NOT NULL DEFAULT 'MS' CHECK (nota_minima IN ('SS', 'MS', 'MM', 'MI', 'II', 'SR')),
     CHECK (data_fim >= data_inicio)
+);
+
+CREATE TABLE inscricoes_turmas (
+    id_inscricao    SERIAL PRIMARY KEY,
+    id_estudante    INTEGER     NOT NULL REFERENCES usuarios(id_usuario),
+    id_turma        INTEGER     NOT NULL REFERENCES turmas(id_turma),
+    data_inscricao  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    status          VARCHAR(20) NOT NULL DEFAULT 'PENDENTE' CHECK (
+                        status IN ('PENDENTE', 'APROVADA', 'REJEITADA', 'CANCELADA')
+                    ),
+    UNIQUE (id_estudante, id_turma)
 );
 
 CREATE TABLE candidaturas (

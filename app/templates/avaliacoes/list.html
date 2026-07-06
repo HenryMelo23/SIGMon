@@ -2,6 +2,26 @@
 {% block title %}Avaliações | SIGMon{% endblock %}
 {% block page_heading %}Avaliações{% endblock %}
 {% block content %}
+{% if desempenho %}
+<section class="panel">
+  <div class="panel-header"><h2>Desempenho por disciplina</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Monitor</th><th>Disciplina</th><th>Media</th><th>Avaliacoes</th></tr></thead>
+      <tbody>
+      {% for linha in desempenho %}
+      <tr>
+        <td>{{ linha.monitor }}</td>
+        <td>{{ linha.disciplina }}</td>
+        <td>{% set status = linha.media_nota ~ "/5" %}{% include "partials/status_badge.html" %}</td>
+        <td>{{ linha.total_avaliacoes }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
 <section class="panel">
   <div class="panel-header"><h2>Avaliações de tutoria</h2></div>
   <div class="table-wrap">

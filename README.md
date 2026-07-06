@@ -81,8 +81,14 @@ Execute os scripts SQL:
 ```bash
 sudo cp sql/sigmon_create.sql /tmp/
 sudo cp sql/sigmon_seeds.sql /tmp/
+sudo cp sql/sigmon_views.sql /tmp/
+sudo cp sql/sigmon_triggers.sql /tmp/
+sudo cp sql/sigmon_procedures.sql /tmp/
 sudo -u postgres psql -d sigmon -f /tmp/sigmon_create.sql
 sudo -u postgres psql -d sigmon -f /tmp/sigmon_seeds.sql
+sudo -u postgres psql -d sigmon -f /tmp/sigmon_views.sql
+sudo -u postgres psql -d sigmon -f /tmp/sigmon_triggers.sql
+sudo -u postgres psql -d sigmon -f /tmp/sigmon_procedures.sql
 sudo -u postgres psql -d sigmon -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO sigmon_user; GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO sigmon_user;"
 ```
 
@@ -111,9 +117,10 @@ Todos usam a senha `123456`.
 | Perfil | E-mail |
 |---|---|
 | Administrador | admin@unb.br |
-| Professor | professor@unb.br |
-| Estudante | estudante@unb.br |
-| Monitor | monitor@unb.br |
+| Professor Caetano | professor@unb.br |
+| Estudante Pedro | pedro@unb.br |
+| Estudante Amanda | amanda@unb.br |
+| Monitor Rafael | rafael@unb.br |
 | Financeiro | financeiro@unb.br |
 
 ## Estrutura do projeto

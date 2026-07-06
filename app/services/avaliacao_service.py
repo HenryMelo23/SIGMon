@@ -26,6 +26,13 @@ class AvaliacaoService:
             return [a for a in avaliacoes if a.id_sessao in sessao_ids]
         return avaliacoes
 
+    def desempenho_por_disciplina(self, usuario):
+        if usuario.papel == "MONITOR":
+            return self.repo.desempenho_por_disciplina(usuario.id_usuario)
+        if usuario.papel in {"PROFESSOR", "ADMINISTRADOR"}:
+            return self.repo.desempenho_por_disciplina()
+        return []
+
     def criar(self, sessao_id, estudante, data):
         sessao = self.sessoes.get_by_id(sessao_id)
         if not sessao or not sessao.realizada:

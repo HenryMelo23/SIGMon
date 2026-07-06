@@ -6,11 +6,12 @@
   <div class="panel-header"><h2>Análise de candidaturas</h2></div>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>Edital</th><th>Estudante</th><th>IRA</th><th>Nota</th><th>Status</th><th>Alterar</th></tr></thead>
+      <thead><tr><th>Edital</th><th>Turma</th><th>Estudante</th><th>IRA</th><th>Nota</th><th>Status</th><th>Alterar</th></tr></thead>
       <tbody>
       {% for c in candidaturas %}
       <tr>
         <td>{{ get_edital(c.id_edital).titulo }}</td>
+        <td>{{ get_turma(c.id_turma).disciplina_nome }} {{ get_turma(c.id_turma).codigo_turma }}</td>
         <td>{{ get_usuario(c.id_estudante).nome }}</td>
         <td>{{ c.ira }}</td>
         <td>{{ c.nota_disciplina }}</td>
@@ -27,7 +28,7 @@
         </td>
       </tr>
       {% else %}
-        {% set colspan = 6 %}{% include "partials/table_empty.html" %}
+        {% set colspan = 7 %}{% include "partials/table_empty.html" %}
       {% endfor %}
       </tbody>
     </table>

@@ -2,25 +2,33 @@
 -- Executar APOS sigmon_create.sql
 
 -- ============================================================
--- TRIGGER 1: impede edital com nota minima abaixo de 7.0
+-- TRIGGER 1: registra auditoria quando o papel do usuario muda.
+-- A procedure de aprovacao atualiza usuarios.papel; este trigger
+-- prova que a auditoria foi gerada automaticamente pelo banco.
 -- ============================================================
 
-CREATE OR REPLACE FUNCTION validar_nota_minima_edital()
+CREATE OR REPLACE FUNCTION auditar_mudanca_papel()
 RETURNS trigger AS $$
 BEGIN
-    IF NEW.nota_minima < 7.0 THEN
-        RAISE EXCEPTION 'A nota minima do edital deve ser maior ou igual a 7.0';
+    IF NEW.papel IS DISTINCT FROM OLD.papel THEN
+        INSERT INTO auditoria (id_usuario, acao, entidade, detalhes)
+        VALUES (
+            NEW.id_usuario,
+            'MUDANCA_PAPEL',
+            'usuarios',
+            'Usuario ' || NEW.id_usuario || ' mudou de ' || OLD.papel || ' para ' || NEW.papel
+        );
     END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_validar_nota_minima
-BEFORE INSERT OR UPDATE ON editais
-FOR EACH ROW EXECUTE FUNCTION validar_nota_minima_edital();
+CREATE TRIGGER trg_auditoria_mudanca_papel
+AFTER UPDATE OF papel ON usuarios
+FOR EACH ROW EXECUTE FUNCTION auditar_mudanca_papel();
 
 -- ============================================================
--- TRIGGER 2: registra auditoria ao inserir ou alterar dados bancarios
+-- TRIGGER 2: registra auditoria ao inserir ou alterar dados bancarios.
 -- ============================================================
 
 CREATE OR REPLACE FUNCTION auditar_dados_bancarios()
@@ -43,7 +51,7 @@ AFTER INSERT OR UPDATE ON dados_bancarios
 FOR EACH ROW EXECUTE FUNCTION auditar_dados_bancarios();
 
 -- ============================================================
--- TRIGGER 3: ao marcar sessao como realizada, marca o slot como reservado
+-- TRIGGER 3: ao marcar sessao como realizada, marca o slot como reservado.
 -- ============================================================
 
 CREATE OR REPLACE FUNCTION sincronizar_slot_sessao()

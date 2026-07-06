@@ -12,7 +12,14 @@ avaliacoes_bp = Blueprint("avaliacoes", __name__, url_prefix="/avaliacoes")
 @login_required
 @roles_required("ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR")
 def index():
-    return render_template("avaliacoes/list.html", avaliacoes=AvaliacaoService().listar(current_user()), sessoes=SessaoRepository().list_all())
+    service = AvaliacaoService()
+    usuario = current_user()
+    return render_template(
+        "avaliacoes/list.html",
+        avaliacoes=service.listar(usuario),
+        desempenho=service.desempenho_por_disciplina(usuario),
+        sessoes=SessaoRepository().list_all(),
+    )
 
 
 @avaliacoes_bp.route("/nova/<int:id_sessao>", methods=["GET", "POST"])

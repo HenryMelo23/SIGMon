@@ -21,18 +21,24 @@ class CandidaturaService:
     def candidatar(self, edital_id, estudante, data):
         edital = self.editais.get_by_id(edital_id)
         if not edital:
-            raise BusinessError("Edital não encontrado.")
+            raise BusinessError("Edital nao encontrado.")
         if not self.edital_service.esta_aberto(edital):
-            raise BusinessError("Só é possível candidatar-se a edital aberto.")
+            raise BusinessError("So e possivel candidatar-se a edital aberto.")
         if self.repo.find_by_edital_estudante(edital_id, estudante.id_usuario):
-            raise BusinessError("Você já se candidatou a este edital.")
+            raise BusinessError("Voce ja se candidatou a este edital.")
+
+        nota = data.get("nota_disciplina", "").strip().upper()
+        if nota not in {"SS", "MS", "MM", "MI", "II", "SR"}:
+            raise BusinessError("Informe uma mencao valida para a disciplina.")
+
         return self.repo.create(
             {
                 "id_edital": int(edital_id),
                 "id_estudante": estudante.id_usuario,
+                "id_turma": int(data.get("id_turma")),
                 "data_inscricao": date.today().isoformat(),
                 "ira": float(data.get("ira", 0)),
-                "nota_disciplina": float(data.get("nota_disciplina", 0)),
+                "nota_disciplina": nota,
                 "status": "INSCRITA",
             }
         )

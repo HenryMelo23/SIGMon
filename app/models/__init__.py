@@ -7,6 +7,7 @@ from app.models.departamento import Departamento
 from app.models.disciplina import Disciplina
 from app.models.documento_anexo import DocumentoAnexo
 from app.models.edital import Edital
+from app.models.inscricao_turma import InscricaoTurma
 from app.models.registro_frequencia import RegistroFrequencia
 from app.models.sessao_tutoria import SessaoTutoria
 from app.models.turma import Turma
@@ -22,6 +23,7 @@ __all__ = [
     "Disciplina",
     "DocumentoAnexo",
     "Edital",
+    "InscricaoTurma",
     "RegistroFrequencia",
     "SessaoTutoria",
     "Turma",

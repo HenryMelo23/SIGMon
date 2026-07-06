@@ -17,6 +17,7 @@ MENU_ITEMS = [
     ("Editais", "editais.index", {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR", "FINANCEIRO"}),
     ("Candidaturas", "candidaturas.index", {"PROFESSOR", "ADMINISTRADOR"}),
     ("Minhas candidaturas", "candidaturas.minhas", {"ESTUDANTE"}),
+    ("Inscricoes em turmas", "inscricoes_turmas.index", {"ESTUDANTE", "MONITOR", "ADMINISTRADOR"}),
     ("Alocações", "alocacoes.index", {"MONITOR", "PROFESSOR", "ADMINISTRADOR"}),
     ("Agenda", "agenda.index", {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR"}),
     ("Sessões", "sessoes.index", {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR"}),

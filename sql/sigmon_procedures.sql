@@ -2,21 +2,19 @@
 -- Executar APOS sigmon_create.sql
 
 -- ============================================================
--- PROCEDURE 1: aprova candidatura e cria alocacao em uma transacao
--- Uso: CALL aprovar_candidatura_e_alocar(id_cand, data_ini, data_fim, carga, id_prof);
+-- PROCEDURE 1: aprova candidatura, transforma o estudante em monitor
+-- e cria a alocacao ativa em uma transacao.
+-- Uso: CALL aprovar_candidatura_e_alocar(id_candidatura, id_professor);
 -- ============================================================
 
 CREATE OR REPLACE PROCEDURE aprovar_candidatura_e_alocar(
-    p_candidatura_id      INTEGER,
-    p_data_inicio         DATE,
-    p_data_fim            DATE,
-    p_carga_horaria       INTEGER,
-    p_id_professor        INTEGER
+    p_candidatura_id INTEGER,
+    p_id_professor   INTEGER
 )
 LANGUAGE plpgsql AS $$
 DECLARE
     v_candidatura candidaturas%ROWTYPE;
-    v_disciplina_id INTEGER;
+    v_turma turmas%ROWTYPE;
 BEGIN
     SELECT * INTO v_candidatura
     FROM candidaturas
@@ -31,18 +29,28 @@ BEGIN
             p_candidatura_id, v_candidatura.status;
     END IF;
 
-    SELECT id_departamento INTO v_disciplina_id
-    FROM editais
-    WHERE id_edital = v_candidatura.id_edital;
+    SELECT * INTO v_turma
+    FROM turmas
+    WHERE id_turma = v_candidatura.id_turma;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Turma % nao encontrada', v_candidatura.id_turma;
+    END IF;
 
     UPDATE candidaturas
     SET status = 'APROVADA'
     WHERE id_candidatura = p_candidatura_id;
 
+    UPDATE usuarios
+    SET papel = 'MONITOR'
+    WHERE id_usuario = v_candidatura.id_estudante
+      AND papel <> 'MONITOR';
+
     INSERT INTO alocacoes_monitores (
         id_candidatura,
         id_monitor,
         id_disciplina,
+        id_turma,
         id_professor,
         data_inicio,
         data_fim,
@@ -51,11 +59,12 @@ BEGIN
     ) VALUES (
         p_candidatura_id,
         v_candidatura.id_estudante,
-        v_disciplina_id,
+        v_turma.id_disciplina,
+        v_turma.id_turma,
         p_id_professor,
-        p_data_inicio,
-        p_data_fim,
-        p_carga_horaria,
+        CURRENT_DATE,
+        CURRENT_DATE + 120,
+        12,
         'ATIVA'
     );
 
@@ -64,7 +73,7 @@ BEGIN
         p_id_professor,
         'APROVAR_CANDIDATURA',
         'candidaturas',
-        'Candidatura ' || p_candidatura_id || ' aprovada. Alocacao criada para monitor ' || v_candidatura.id_estudante
+        'Candidatura ' || p_candidatura_id || ' aprovada e alocacao criada para usuario ' || v_candidatura.id_estudante
     );
 END;
 $$;

@@ -1,6 +1,7 @@
 from app.routes.agenda_routes import agenda_bp
 from app.routes.historico_routes import historico_bp
 from app.routes.horario_routes import horarios_bp
+from app.routes.inscricao_turma_routes import inscricoes_turmas_bp
 from app.routes.alocacao_routes import alocacoes_bp
 from app.routes.avaliacao_routes import avaliacoes_bp
 from app.routes.auth_routes import auth_bp
@@ -26,6 +27,7 @@ def register_blueprints(app):
         turmas_bp,
         editais_bp,
         candidaturas_bp,
+        inscricoes_turmas_bp,
         alocacoes_bp,
         agenda_bp,
         sessoes_bp,

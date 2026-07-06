@@ -15,8 +15,21 @@
   </div>
   {% if current_user.papel == "ESTUDANTE" and aberto %}
   <form class="form-grid" method="post" action="{{ url_for('editais.candidatar', id=edital.id_edital) }}">
+    <label>Turma
+      <select name="id_turma" required>
+        {% for turma in turmas %}
+        <option value="{{ turma.id_turma }}">{{ turma.disciplina_nome }} {{ turma.codigo_turma }} - {{ turma.professor_nome }}</option>
+        {% endfor %}
+      </select>
+    </label>
     <label>IRA <input name="ira" type="number" min="0" max="5" step="0.01" required></label>
-    <label>Nota na disciplina <input name="nota_disciplina" type="number" min="0" max="10" step="0.1" required></label>
+    <label>Mencao na disciplina
+      <select name="nota_disciplina" required>
+        {% for mencao in ["SS", "MS", "MM", "MI", "II", "SR"] %}
+        <option value="{{ mencao }}">{{ mencao }}</option>
+        {% endfor %}
+      </select>
+    </label>
     <div class="actions full"><button class="btn btn-primary">Candidatar-me</button></div>
   </form>
   {% endif %}

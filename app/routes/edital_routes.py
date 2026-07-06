@@ -2,6 +2,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app.repositories.departamento_repository import DepartamentoRepository
 from app.repositories.edital_repository import EditalRepository
+from app.repositories.turma_repository import TurmaRepository
 from app.services.candidatura_service import CandidaturaService
 from app.services.edital_service import EditalService
 from app.utils.decorators import current_user, login_required, roles_required
@@ -28,7 +29,13 @@ def index():
 @login_required
 def detail(id):
     edital = EditalRepository().get_by_id(id)
-    return render_template("editais/detail.html", edital=edital, aberto=EditalService().esta_aberto(edital))
+    turmas = TurmaRepository().list_by_semestre(edital.semestre) if edital else []
+    return render_template(
+        "editais/detail.html",
+        edital=edital,
+        aberto=EditalService().esta_aberto(edital),
+        turmas=turmas,
+    )
 
 
 @editais_bp.route("/novo", methods=["GET", "POST"])

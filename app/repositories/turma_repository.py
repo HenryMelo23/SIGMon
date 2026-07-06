@@ -6,7 +6,17 @@ class TurmaRepository:
     def get_by_id(self, id):
         with get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM turmas WHERE id_turma = %s", (id,))
+            cursor.execute(
+                """
+                SELECT t.*, d.nome AS disciplina_nome, u.nome AS professor_nome, h.codigo AS horario_codigo
+                FROM turmas t
+                JOIN disciplinas d ON t.id_disciplina = d.id_disciplina
+                JOIN usuarios u ON t.id_professor = u.id_usuario
+                LEFT JOIN horarios h ON t.id_horario = h.id_horario
+                WHERE t.id_turma = %s
+                """,
+                (id,),
+            )
             row = cursor.fetchone()
             if row:
                 return Turma(*row)

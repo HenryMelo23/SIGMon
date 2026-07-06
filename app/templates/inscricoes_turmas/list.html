@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Inscricoes em turmas | SIGMon{% endblock %}
+{% block page_heading %}Inscricoes em turmas{% endblock %}
+{% block content %}
+{% if current_user.papel in ["ESTUDANTE", "MONITOR"] %}
+<form class="panel form-grid" method="post" action="{{ url_for('inscricoes_turmas.nova') }}">
+  <label>Turma
+    <select name="id_turma" required>
+      {% for turma in turmas %}
+      <option value="{{ turma.id_turma }}">{{ turma.disciplina_nome }} {{ turma.codigo_turma }} - {{ turma.professor_nome }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <div class="actions full"><button class="btn btn-primary">Solicitar inscricao</button></div>
+</form>
+{% endif %}
+
+<section class="panel">
+  <div class="panel-header"><h2>Inscricoes</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Estudante</th><th>Turma</th><th>Data</th><th>Status</th>{% if current_user.papel == "ADMINISTRADOR" %}<th>Alterar</th>{% endif %}</tr></thead>
+      <tbody>
+      {% for inscricao in inscricoes %}
+      {% set turma = get_turma(inscricao.id_turma) %}
+      <tr>
+        <td>{{ get_usuario(inscricao.id_estudante).nome }}</td>
+        <td>{{ turma.disciplina_nome }} {{ turma.codigo_turma }}</td>
+        <td>{{ inscricao.data_inscricao }}</td>
+        <td>{% set status = inscricao.status %}{% include "partials/status_badge.html" %}</td>
+        {% if current_user.papel == "ADMINISTRADOR" %}
+        <td>
+          <form class="actions" method="post" action="{{ url_for('inscricoes_turmas.status', id=inscricao.id_inscricao) }}">
+            <select name="status">
+              {% for s in ["PENDENTE", "APROVADA", "REJEITADA", "CANCELADA"] %}
+              <option value="{{ s }}" {% if inscricao.status == s %}selected{% endif %}>{{ s|replace("_", " ")|title }}</option>
+              {% endfor %}
+            </select>
+            <button class="btn btn-primary">Salvar</button>
+          </form>
+        </td>
+        {% endif %}
+      </tr>
+      {% else %}
+        {% set colspan = 5 %}{% include "partials/table_empty.html" %}
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
