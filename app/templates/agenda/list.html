@@ -1,37 +1,93 @@
 {% extends "base.html" %}
 {% block title %}Agenda | SIGMon{% endblock %}
 {% block page_heading %}Agenda{% endblock %}
+
+{% macro slots_table(rows, pode_reservar, pode_editar) %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Monitor</th>
+        <th>Disciplina</th>
+        <th>Turma</th>
+        <th>Data</th>
+        <th>Horário</th>
+        <th>Local</th>
+        <th>Modalidade</th>
+        <th>Status</th>
+        {% if pode_reservar or pode_editar %}<th>Ações</th>{% endif %}
+      </tr>
+    </thead>
+    <tbody>
+    {% for slot in rows %}
+    <tr>
+      <td>{{ slot.monitor_nome }}</td>
+      <td>{{ slot.disciplina_nome }}</td>
+      <td>{{ slot.turma_codigo }}</td>
+      <td>{{ slot.data_slot }}</td>
+      <td>{{ slot.hora_inicio }} – {{ slot.hora_fim }}</td>
+      <td>{% if slot.modalidade == "ONLINE" %}Online{% else %}{{ slot.local_atendimento }}{% endif %}</td>
+      <td>{{ slot.modalidade }}</td>
+      <td>
+        {% set status = "Reservado" if slot.reservado else "Disponível" %}
+        {% include "partials/status_badge.html" %}
+      </td>
+      {% if pode_reservar or pode_editar %}
+      <td class="actions">
+        {% if pode_reservar and not slot.reservado %}
+        <form class="actions" method="post" action="{{ url_for('agenda.reservar', id=slot.id_slot) }}">
+          <input name="assunto" placeholder="Assunto" required>
+          <button class="btn btn-primary">Reservar</button>
+        </form>
+        {% elif pode_reservar %}
+        —
+        {% endif %}
+        {% if pode_editar and not slot.reservado %}
+        <a class="btn btn-outline" href="{{ url_for('agenda.editar', id=slot.id_slot) }}">Editar</a>
+        <form data-confirm="Excluir este horário?" method="post" action="{{ url_for('agenda.excluir', id=slot.id_slot) }}">
+          <button class="btn btn-danger">Excluir</button>
+        </form>
+        {% endif %}
+      </td>
+      {% endif %}
+    </tr>
+    {% else %}
+      {% set colspan = 9 if (pode_reservar or pode_editar) else 8 %}
+      {% include "partials/table_empty.html" %}
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endmacro %}
+
 {% block content %}
+
+{% if current_user.papel == "MONITOR" %}
+
+<section class="panel" style="margin-bottom:1.5rem;">
+  <div class="panel-header">
+    <h2>Meus horários de atendimento</h2>
+    <a class="btn btn-primary" href="{{ url_for('agenda.novo') }}">Novo horário</a>
+  </div>
+  {{ slots_table(meus_slots, false, true) }}
+</section>
+
+<section class="panel">
+  <div class="panel-header">
+    <h2>Horários para agendar</h2>
+  </div>
+  {{ slots_table(slots_agenda, true, false) }}
+</section>
+
+{% else %}
+
 <section class="panel">
   <div class="panel-header">
     <h2>Horários de atendimento</h2>
-    {% if current_user.papel == "MONITOR" %}<a class="btn btn-primary" href="{{ url_for('agenda.novo') }}">Novo horário</a>{% endif %}
   </div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Data</th><th>Horário</th><th>Local</th><th>Modalidade</th><th>Status</th><th>Reserva</th></tr></thead>
-      <tbody>
-      {% for slot in slots %}
-      <tr>
-        <td>{{ slot.data_slot }}</td>
-        <td>{{ slot.hora_inicio }}-{{ slot.hora_fim }}</td>
-        <td>{{ slot.local_atendimento }}</td>
-        <td>{{ slot.modalidade }}</td>
-        <td>{% set status = "Reservado" if slot.reservado else "Disponível" %}{% include "partials/status_badge.html" %}</td>
-        <td>
-          {% if current_user.papel == "ESTUDANTE" and not slot.reservado %}
-          <form class="actions" method="post" action="{{ url_for('agenda.reservar', id=slot.id_slot) }}">
-            <input name="assunto" placeholder="Assunto do atendimento" required>
-            <button class="btn btn-primary">Reservar</button>
-          </form>
-          {% endif %}
-        </td>
-      </tr>
-      {% else %}
-        {% set colspan = 6 %}{% include "partials/table_empty.html" %}
-      {% endfor %}
-      </tbody>
-    </table>
-  </div>
+  {{ slots_table(slots, current_user.papel == "ESTUDANTE", false) }}
 </section>
+
+{% endif %}
+
 {% endblock %}

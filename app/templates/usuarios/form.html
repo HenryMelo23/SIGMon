@@ -16,15 +16,15 @@
   <label>Departamento
     <select name="id_departamento">
       {% for departamento in departamentos %}
-      <option value="{{ departamento.id_departamento }}" {% if usuario and usuario.id_departamento == departamento.id_departamento %}selected{% endif %}>{{ departamento.sigla }}</option>
+      <option value="{{ departamento.id_departamento }}" {% if usuario and usuario.id_departamento == departamento.id_departamento %}selected{% endif %}>{{ departamento.nome }}</option>
       {% endfor %}
     </select>
   </label>
   <label>Senha simulada <input name="senha_hash" value="{{ usuario.senha_hash if usuario else '123456' }}"></label>
-  <label class="full"><input type="checkbox" name="ativo" {% if not usuario or usuario.ativo %}checked{% endif %}> Usuário ativo</label>
+  <input type="hidden" name="volta_papel" value="{{ volta_papel }}">
   <div class="actions full">
     <button class="btn btn-primary" type="submit">Salvar</button>
-    <a class="btn btn-outline" href="{{ url_for('usuarios.index') }}">Cancelar</a>
+    <a class="btn btn-outline" href="{{ url_for('usuarios.index', papel=volta_papel) }}">Cancelar</a>
   </div>
 </form>
 {% endblock %}

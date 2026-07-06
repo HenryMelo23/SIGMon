@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Corrigir Histórico | SIGMon{% endblock %}
+{% block page_heading %}Corrigir histórico rejeitado{% endblock %}
+{% block content %}
+{% if historico.justificativa %}
+<div class="panel" style="margin-bottom:1rem; border-left: 4px solid var(--color-danger);">
+  <strong>Motivo da rejeição:</strong> {{ historico.justificativa }}
+</div>
+{% endif %}
+<form class="panel form-grid" method="post" enctype="multipart/form-data">
+  <label>Disciplina
+    <input type="text" value="{{ historico.disciplina_codigo }} — {{ historico.disciplina_nome }}" disabled>
+  </label>
+  <label>Semestre <input name="semestre" value="{{ historico.semestre }}" required></label>
+  <label>Menção
+    <select name="mencao" required>
+      {% for m in ['SS', 'MS', 'MM', 'MI', 'II', 'SR'] %}
+      <option value="{{ m }}" {% if historico.mencao == m %}selected{% endif %}>{{ m }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label class="full">Novo comprovante (opcional — só envie se precisar trocar o PDF)
+    <input type="file" name="comprovante" accept="application/pdf">
+  </label>
+  <div class="actions full">
+    <button class="btn btn-primary">Salvar e reenviar</button>
+    <a class="btn btn-outline" href="{{ url_for('historico.index') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

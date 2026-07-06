@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Horários | SIGMon{% endblock %}
+{% block page_heading %}Horários{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header">
+    <h2>Horários disponíveis</h2>
+    <a class="btn btn-primary" href="{{ url_for('horarios.form') }}">Novo horário</a>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Código</th><th>Descrição</th><th>Turno</th><th>Ativo</th><th>Ações</th></tr></thead>
+      <tbody>
+      {% for horario in horarios %}
+      <tr>
+        <td>{{ horario.codigo }}</td>
+        <td>{{ horario.descricao }}</td>
+        <td>{{ "Manhã" if horario.turno == "M" else "Tarde" if horario.turno == "T" else "Noite" }}</td>
+        <td>{% set status = "Ativo" if horario.ativo else "Inativo" %}{% include "partials/status_badge.html" %}</td>
+        <td class="actions">
+          <a class="btn btn-outline" href="{{ url_for('horarios.form', id=horario.id_horario) }}">Editar</a>
+          <form data-confirm="Remover este horário?" method="post" action="{{ url_for('horarios.remover', id=horario.id_horario) }}">
+            <button class="btn btn-danger">Remover</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+        {% set colspan = 5 %}{% include "partials/table_empty.html" %}
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

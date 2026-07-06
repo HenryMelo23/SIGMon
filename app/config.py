@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class Config:
@@ -6,7 +9,3 @@ class Config:
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
     APP_NAME = "SIGMon"
-
-    # Futuro PostgreSQL:
-    # SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
-    # MIGRATIONS_DIR = "migrations/"

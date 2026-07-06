@@ -10,15 +10,17 @@
     <select name="id_professor">{% for p in professores %}<option value="{{ p.id_usuario }}" {% if turma and turma.id_professor == p.id_usuario %}selected{% endif %}>{{ p.nome }}</option>{% endfor %}</select>
   </label>
   <label>Semestre <input name="semestre" value="{{ turma.semestre if turma else '2026.1' }}" required></label>
-  <label>Código da turma <input name="codigo_turma" value="{{ turma.codigo_turma if turma else '' }}" required></label>
-  <label>Tipo
-    <select name="tipo_turma">
-      <option value="TEORICA" {% if turma and turma.tipo_turma == "TEORICA" %}selected{% endif %}>Teórica</option>
-      <option value="PRATICA" {% if turma and turma.tipo_turma == "PRATICA" %}selected{% endif %}>Prática</option>
+  <label>Turma <input name="codigo_turma" placeholder="T01" value="{{ turma.codigo_turma if turma else '' }}" required></label>
+<label>Horário
+    <select name="id_horario">
+      {% for h in horarios %}
+      <option value="{{ h.id_horario }}" {% if turma and turma.id_horario == h.id_horario %}selected{% endif %}>{{ h.codigo }} — {{ h.descricao }}</option>
+      {% endfor %}
     </select>
   </label>
-  <label>Horário <input name="horario" value="{{ turma.horario if turma else '' }}" required></label>
   <label>Sala <input name="sala" value="{{ turma.sala if turma else '' }}" required></label>
+  <label>Vagas de monitor <input type="number" name="vagas_monitor" min="0" value="{{ turma.vagas_monitor if turma else 0 }}" required></label>
+  <label>Carga horária semanal (h) <input type="number" name="carga_horaria_semanal" min="1" value="{{ turma.carga_horaria_semanal if turma else 12 }}" required></label>
   <div class="actions full">
     <button class="btn btn-primary">Salvar</button>
     <a class="btn btn-outline" href="{{ url_for('turmas.index') }}">Cancelar</a>

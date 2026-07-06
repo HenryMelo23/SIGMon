@@ -1,20 +1,30 @@
 {% extends "base.html" %}
-{% block title %}Novo horário | SIGMon{% endblock %}
-{% block page_heading %}Novo horário{% endblock %}
+{% block title %}{{ "Editar horário" if slot else "Novo horário" }} | SIGMon{% endblock %}
+{% block page_heading %}{{ "Editar horário" if slot else "Novo horário" }}{% endblock %}
 {% block content %}
 <form class="panel form-grid" method="post">
   <label>Alocação
-    <select name="id_alocacao">{% for a in alocacoes %}<option value="{{ a.id_alocacao }}">{{ get_disciplina(a.id_disciplina).nome }} - {{ get_turma(a.id_turma).codigo_turma }}</option>{% endfor %}</select>
+    <select name="id_alocacao" {% if slot %}disabled{% endif %}>
+      {% for a in alocacoes %}
+      <option value="{{ a.id_alocacao }}" {% if slot and slot.id_alocacao == a.id_alocacao %}selected{% endif %}>
+        {{ get_disciplina(a.id_disciplina).nome }} — {{ get_turma(a.id_turma).codigo_turma }}
+      </option>
+      {% endfor %}
+    </select>
   </label>
-  <label>Data <input type="date" name="data_slot" required></label>
-  <label>Hora início <input type="time" name="hora_inicio" required></label>
-  <label>Hora fim <input type="time" name="hora_fim" required></label>
+  <label>Data <input type="date" name="data_slot" value="{{ slot.data_slot if slot else '' }}" required></label>
+  <label>Hora início <input type="time" name="hora_inicio" value="{{ slot.hora_inicio if slot else '' }}" required></label>
+  <label>Hora fim <input type="time" name="hora_fim" value="{{ slot.hora_fim if slot else '' }}" required></label>
   <label>Modalidade
-    <select name="modalidade"><option>PRESENCIAL</option><option>ONLINE</option><option>HIBRIDA</option></select>
+    <select name="modalidade">
+      {% for m in ["PRESENCIAL", "ONLINE", "HIBRIDA"] %}
+      <option {% if slot and slot.modalidade == m %}selected{% endif %}>{{ m }}</option>
+      {% endfor %}
+    </select>
   </label>
-  <label>Local ou link <input name="local_atendimento" required></label>
+  <label>Local ou link <input name="local_atendimento" value="{{ slot.local_atendimento if slot else '' }}" required></label>
   <div class="actions full">
-    <button class="btn btn-primary">Criar horário</button>
+    <button class="btn btn-primary">{{ "Salvar" if slot else "Criar horário" }}</button>
     <a class="btn btn-outline" href="{{ url_for('agenda.index') }}">Cancelar</a>
   </div>
 </form>

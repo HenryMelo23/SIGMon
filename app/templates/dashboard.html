@@ -3,6 +3,7 @@
 {% block page_heading %}Dashboard{% endblock %}
 {% block page_subtitle %}Visão operacional adaptada ao perfil {{ role_labels[current_user.papel] }}{% endblock %}
 {% block content %}
+
 <div class="grid metrics">
   {% for item in stats %}
     {% set label = item.label %}
@@ -47,7 +48,13 @@
         <tr>
           <td>{{ slot.data_slot }}</td>
           <td>{{ slot.hora_inicio }}-{{ slot.hora_fim }}</td>
-          <td>{{ slot.local_atendimento }}</td>
+          <td>
+            {% if slot.modalidade == "ONLINE" %}
+              Online
+            {% else %}
+              {{ slot.local_atendimento }}
+            {% endif %}
+          </td>
           <td>{{ slot.modalidade }}</td>
           <td>{% set status = "Reservado" if slot.reservado else "Disponível" %}{% include "partials/status_badge.html" %}</td>
         </tr>

@@ -5,9 +5,7 @@ from app.repositories.alocacao_repository import AlocacaoRepository
 from app.repositories.avaliacao_repository import AvaliacaoRepository
 from app.repositories.candidatura_repository import CandidaturaRepository
 from app.repositories.edital_repository import EditalRepository
-from app.repositories.frequencia_repository import FrequenciaRepository
 from app.repositories.sessao_repository import SessaoRepository
-from app.services.edital_service import EditalService
 from app.utils.decorators import current_user, login_required
 
 dashboard_bp = Blueprint("dashboard", __name__, url_prefix="/dashboard")
@@ -17,61 +15,20 @@ dashboard_bp = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 @login_required
 def index():
     usuario = current_user()
-    editais = EditalRepository().list_all()
-    candidaturas = CandidaturaRepository().list_all()
-    sessoes = SessaoRepository().list_all()
-    frequencias = FrequenciaRepository().list_all()
-    avaliacoes = AvaliacaoRepository().list_all()
-    stats = [
-        {
-            "label": "Editais abertos",
-            "value": sum(1 for e in editais if EditalService().esta_aberto(e)),
-            "description": "Processos seletivos disponíveis",
-            "icon": "◇",
-            "endpoint": "editais.index",
-            "action_label": "Ver editais",
-        },
-        {
-            "label": "Candidaturas pendentes",
-            "value": sum(1 for c in candidaturas if c.status in {"INSCRITA", "EM_ANALISE"}),
-            "description": "Aguardando análise acadêmica",
-            "icon": "◌",
-            "endpoint": "candidaturas.index" if usuario.papel in {"PROFESSOR", "ADMINISTRADOR"} else None,
-            "action_label": "Analisar",
-        },
-        {
-            "label": "Monitores ativos",
-            "value": sum(1 for a in AlocacaoRepository().list_all() if a.status == "ATIVA"),
-            "description": "Alocações em andamento",
-            "icon": "▰",
-            "endpoint": "alocacoes.index" if usuario.papel in {"MONITOR", "PROFESSOR", "ADMINISTRADOR"} else None,
-            "action_label": "Ver alocações",
-        },
-        {
-            "label": "Sessões agendadas",
-            "value": sum(1 for s in sessoes if not s.realizada),
-            "description": "Atendimentos a realizar",
-            "icon": "◍",
-            "endpoint": "sessoes.index" if usuario.papel in {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR"} else None,
-            "action_label": "Ver sessões",
-        },
-        {
-            "label": "Frequências pendentes",
-            "value": sum(1 for f in frequencias if not f.validado),
-            "description": "Registros aguardando validação",
-            "icon": "✓",
-            "endpoint": "frequencias.index" if usuario.papel in {"MONITOR", "PROFESSOR", "FINANCEIRO", "ADMINISTRADOR"} else None,
-            "action_label": "Ver registros",
-        },
-        {
-            "label": "Avaliações recebidas",
-            "value": len(avaliacoes),
-            "description": "Feedbacks de tutorias",
-            "icon": "★",
-            "endpoint": "avaliacoes.index" if usuario.papel in {"ESTUDANTE", "MONITOR", "PROFESSOR", "ADMINISTRADOR"} else None,
-            "action_label": "Ver avaliações",
-        },
-    ]
+    papel = usuario.papel
+    repo_agenda = AgendaRepository()
+
+    stats = _build_stats(papel, usuario.id_usuario)
+
+    if papel == "ESTUDANTE":
+        slots = repo_agenda.list_by_turmas_inscritas(usuario.id_usuario)
+    elif papel == "MONITOR":
+        slots = repo_agenda.list_para_monitor(usuario.id_usuario)
+    elif papel == "PROFESSOR":
+        slots = repo_agenda.list_by_professor(usuario.id_usuario)
+    else:
+        slots = repo_agenda.list_all()
+
     quick_actions = {
         "ESTUDANTE": [
             ("Ver editais", "editais.index", "Encontrar processos seletivos abertos"),
@@ -80,28 +37,89 @@ def index():
         ],
         "MONITOR": [
             ("Criar horário", "agenda.novo", "Abrir agenda de atendimento"),
-            ("Registrar frequência", "frequencias.nova", "Enviar atividade realizada"),
+            ("Ver sessões", "sessoes.index", "Acompanhar atendimentos"),
             ("Ver avaliações", "avaliacoes.index", "Acompanhar feedbacks recebidos"),
         ],
         "PROFESSOR": [
             ("Analisar candidaturas", "candidaturas.index", "Atualizar status dos estudantes"),
-            ("Validar frequências", "frequencias.index", "Conferir atividades de monitores"),
             ("Ver turmas", "turmas.index", "Acompanhar turmas vinculadas"),
+            ("Ver avaliações", "avaliacoes.index", "Acompanhar feedbacks dos monitores"),
         ],
         "ADMINISTRADOR": [
             ("Novo edital", "editais.form", "Publicar processo de monitoria"),
             ("Gerenciar usuários", "usuarios.index", "Manter perfis e permissões"),
             ("Criar disciplina", "disciplinas.form", "Atualizar catálogo do CIC"),
         ],
-        "FINANCEIRO": [
-            ("Ver monitores ativos", "financeiro.index", "Consultar dados para pagamento"),
-            ("Frequências validadas", "frequencias.index", "Conferir registros aprovados"),
-        ],
     }
+
     return render_template(
         "dashboard.html",
         stats=stats,
-        quick_actions=quick_actions.get(usuario.papel, []),
-        slots=AgendaRepository().list_all(),
+        quick_actions=quick_actions.get(papel, []),
+        slots=slots,
         usuario=usuario,
     )
+
+
+def _build_stats(papel, id_usuario=None):
+    editais_abertos     = EditalRepository().count_abertos()
+    candidaturas_pend   = CandidaturaRepository().count_pendentes()
+    alocacoes_ativas    = AlocacaoRepository().count_ativos()
+    sessoes_agendadas   = SessaoRepository().count_nao_realizadas()
+    repo_av = AvaliacaoRepository()
+    if papel == "MONITOR" and id_usuario:
+        total_avaliacoes = repo_av.count_recebidas_monitor(id_usuario)
+    else:
+        total_avaliacoes = repo_av.count_all()
+
+    all_stats = {
+        "editais": {
+            "label": "Editais abertos",
+            "value": editais_abertos,
+            "description": "Processos seletivos disponíveis",
+            "icon": "◇",
+            "endpoint": "editais.index",
+            "action_label": "Ver editais",
+        },
+        "candidaturas": {
+            "label": "Candidaturas pendentes",
+            "value": candidaturas_pend,
+            "description": "Aguardando análise acadêmica",
+            "icon": "◌",
+            "endpoint": "candidaturas.index",
+            "action_label": "Analisar",
+        },
+        "alocacoes": {
+            "label": "Monitores ativos",
+            "value": alocacoes_ativas,
+            "description": "Alocações em andamento",
+            "icon": "▰",
+            "endpoint": "alocacoes.index",
+            "action_label": "Ver alocações",
+        },
+        "sessoes": {
+            "label": "Sessões agendadas",
+            "value": sessoes_agendadas,
+            "description": "Atendimentos a realizar",
+            "icon": "◍",
+            "endpoint": "sessoes.index",
+            "action_label": "Ver sessões",
+        },
+        "avaliacoes": {
+            "label": "Avaliações recebidas",
+            "value": total_avaliacoes,
+            "description": "Feedbacks de tutorias",
+            "icon": "★",
+            "endpoint": "avaliacoes.index",
+            "action_label": "Ver avaliações",
+        },
+    }
+
+    ordem = {
+        "ESTUDANTE":     ["editais", "sessoes"],
+        "MONITOR":       ["editais", "sessoes", "avaliacoes"],
+        "PROFESSOR":     ["candidaturas", "alocacoes", "sessoes", "avaliacoes"],
+        "ADMINISTRADOR": ["editais", "candidaturas", "alocacoes", "sessoes", "avaliacoes"],
+    }
+
+    return [all_stats[k] for k in ordem.get(papel, [])]

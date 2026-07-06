@@ -11,3 +11,6 @@ class AgendaSlot:
     local_atendimento: str
     modalidade: str
     reservado: bool
+    monitor_nome: str = ""
+    disciplina_nome: str = ""
+    turma_codigo: str = ""

@@ -7,6 +7,5 @@ class SessaoTutoria:
     id_slot: int
     id_estudante: int
     assunto: str
-    observacoes: str
     realizada: bool
     data_registro: str

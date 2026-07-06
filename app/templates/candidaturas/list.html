@@ -4,22 +4,39 @@
 {% block content %}
 <section class="panel">
   <div class="panel-header"><h2>Análise de candidaturas</h2></div>
+  <form class="actions" method="get">
+    <select name="semestre">
+      <option value="">Todos os semestres</option>
+      {% for s in semestres %}
+      <option value="{{ s }}" {% if semestre_sel == s %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+    <select name="status">
+      <option value="">Todos os status</option>
+      {% for s in statuses %}
+      <option value="{{ s }}" {% if status_sel == s %}selected{% endif %}>{{ s|replace("_"," ")|title }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-outline">Filtrar</button>
+  </form>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>Edital</th><th>Estudante</th><th>IRA</th><th>Nota</th><th>Status</th><th>Alterar</th></tr></thead>
+      <thead><tr><th>Edital</th><th>Estudante</th><th>Turma</th><th>Disciplina</th><th>IRA</th><th>Nota</th><th>Status</th><th>Alterar</th></tr></thead>
       <tbody>
       {% for c in candidaturas %}
       <tr>
         <td>{{ get_edital(c.id_edital).titulo }}</td>
-        <td>{{ get_usuario(c.id_estudante).nome }}</td>
+        <td>{{ c.estudante_nome }}</td>
+        <td>{{ c.turma_codigo }}</td>
+        <td>{{ c.disciplina_nome }}</td>
         <td>{{ c.ira }}</td>
         <td>{{ c.nota_disciplina }}</td>
         <td>{% set status = c.status %}{% include "partials/status_badge.html" %}</td>
         <td>
           <form class="actions" method="post" action="{{ url_for('candidaturas.status', id=c.id_candidatura) }}">
             <select name="status">
-              {% for s in ["INSCRITA","EM_ANALISE","APROVADA","REPROVADA","CANCELADA"] %}
-              <option value="{{ s }}" {% if c.status == s %}selected{% endif %}>{{ s|replace("_", " ")|title }}</option>
+              {% for s in statuses %}
+              <option value="{{ s }}" {% if c.status == s %}selected{% endif %}>{{ s|replace("_"," ")|title }}</option>
               {% endfor %}
             </select>
             <button class="btn btn-primary">Salvar</button>
@@ -27,7 +44,7 @@
         </td>
       </tr>
       {% else %}
-        {% set colspan = 6 %}{% include "partials/table_empty.html" %}
+        {% set colspan = 8 %}{% include "partials/table_empty.html" %}
       {% endfor %}
       </tbody>
     </table>

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Histórico Escolar | SIGMon{% endblock %}
+{% block page_heading %}Histórico Escolar{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header">
+    <h2>{% if current_user.papel == "ADMINISTRADOR" %}{{ "Históricos Aprovados" if filtro == "aprovado" else "Históricos Pendentes" }}{% else %}Meu Histórico{% endif %}</h2>
+    {% if current_user.papel in ["ESTUDANTE", "MONITOR"] %}
+    <a class="btn btn-primary" href="{{ url_for('historico.novo') }}">Adicionar disciplinas</a>
+    {% endif %}
+  </div>
+  {% if current_user.papel == "ADMINISTRADOR" %}
+  <div class="actions" style="margin-bottom:1rem;">
+    <a class="btn {% if not filtro %}btn-primary{% else %}btn-outline{% endif %}" href="{{ url_for('historico.index') }}">Pendentes</a>
+    <a class="btn {% if filtro == 'aprovado' %}btn-primary{% else %}btn-outline{% endif %}" href="{{ url_for('historico.index', filtro='aprovado') }}">Aprovados</a>
+  </div>
+  {% endif %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          {% if current_user.papel == "ADMINISTRADOR" %}<th>Estudante</th>{% endif %}
+          <th>Disciplina</th>
+          <th>Semestre</th>
+          <th>Menção</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for h in historicos %}
+      <tr>
+        {% if current_user.papel == "ADMINISTRADOR" %}<td>{{ h.estudante_nome }}</td>{% endif %}
+        <td>{{ h.disciplina_codigo }} — {{ h.disciplina_nome }}</td>
+        <td>{{ h.semestre }}</td>
+        <td>{{ h.mencao }}</td>
+        <td>
+          {% set status = h.status %}{% include "partials/status_badge.html" %}
+          {% if h.status == "REJEITADO" and h.justificativa %}
+          <small style="display:block; color: var(--color-danger); margin-top:.25rem;">{{ h.justificativa }}</small>
+          {% endif %}
+        </td>
+        <td class="actions">
+          <a class="btn btn-outline" href="{{ url_for('historico.comprovante', id=h.id_historico) }}" target="_blank">PDF</a>
+          {% if current_user.papel == "ADMINISTRADOR" %}
+            {% if filtro != "aprovado" %}
+            <form method="post" action="{{ url_for('historico.aprovar', id=h.id_historico) }}">
+              <button class="btn btn-primary">Aprovar</button>
+            </form>
+            <form method="post" action="{{ url_for('historico.rejeitar', id=h.id_historico) }}" style="display:flex; gap:.5rem; align-items:center;">
+              <input name="justificativa" placeholder="Justificativa" required style="flex:1;">
+              <button class="btn btn-danger">Rejeitar</button>
+            </form>
+            {% else %}
+            <form method="post" action="{{ url_for('historico.reverter', id=h.id_historico) }}" style="display:flex; gap:.5rem; align-items:center;">
+              <input name="justificativa" placeholder="Motivo da reversão" required style="flex:1;">
+              <button class="btn btn-danger">Reverter</button>
+            </form>
+            {% endif %}
+          {% else %}
+            {% if h.status == "REJEITADO" %}
+            <a class="btn btn-outline" href="{{ url_for('historico.editar', id=h.id_historico) }}">Corrigir</a>
+            {% endif %}
+            {% if h.status in ["PENDENTE", "REJEITADO"] %}
+            <form data-confirm="Remover este histórico?" method="post" action="{{ url_for('historico.remover', id=h.id_historico) }}">
+              <button class="btn btn-danger">Remover</button>
+            </form>
+            {% endif %}
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+        {% set colspan = 6 %}{% include "partials/table_empty.html" %}
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

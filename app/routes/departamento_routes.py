@@ -2,6 +2,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app.services.departamento_service import DepartamentoService
 from app.utils.decorators import login_required, roles_required
+from app.utils.validators import BusinessError
 
 departamentos_bp = Blueprint("departamentos", __name__, url_prefix="/departamentos")
 
@@ -20,9 +21,12 @@ def index():
 def form(id=None):
     service = DepartamentoService()
     if request.method == "POST":
-        service.salvar(request.form, id)
-        flash("Departamento salvo.", "success")
-        return redirect(url_for("departamentos.index"))
+        try:
+            service.salvar(request.form, id)
+            flash("Departamento salvo.", "success")
+            return redirect(url_for("departamentos.index"))
+        except BusinessError as exc:
+            flash(str(exc), "danger")
     return render_template("departamentos/form.html", departamento=service.obter(id) if id else None)
 
 
@@ -30,6 +34,9 @@ def form(id=None):
 @login_required
 @roles_required("ADMINISTRADOR")
 def remover(id):
-    DepartamentoService().remover(id)
-    flash("Departamento removido.", "success")
+    try:
+        DepartamentoService().remover(id)
+        flash("Departamento removido.", "success")
+    except BusinessError as exc:
+        flash(str(exc), "danger")
     return redirect(url_for("departamentos.index"))
