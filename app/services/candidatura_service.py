@@ -1,6 +1,5 @@
 from datetime import date
 
-from app.database.db import get_connection
 from app.repositories.alocacao_repository import AlocacaoRepository
 from app.repositories.candidatura_repository import CandidaturaRepository
 from app.repositories.edital_repository import EditalRepository
@@ -76,13 +75,7 @@ class CandidaturaService:
             vagas_ocupadas = self.repo.count_aprovadas_turma(candidatura.id_turma, edital.semestre)
             if vagas_ocupadas >= turma.vagas_monitor:
                 raise BusinessError("Esta turma não possui mais vagas disponíveis.")
-            with get_connection() as conn:
-                cursor = conn.cursor()
-                cursor.execute(
-                    "CALL aprovar_candidatura_e_alocar(%s, %s)",
-                    (candidatura_id, usuario.id_usuario)
-                )
-                conn.commit()
+            self.repo.aprovar_via_procedure(candidatura_id, usuario.id_usuario)
         else:
             if candidatura.status == "APROVADA":
                 UsuarioRepository().mudar_papel(candidatura.id_estudante, "ESTUDANTE")

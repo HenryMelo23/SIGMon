@@ -151,6 +151,15 @@ class CandidaturaRepository:
             row = cursor.fetchone()
             return Candidatura(*row) if row else None
 
+    def aprovar_via_procedure(self, candidatura_id, id_aprovador):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "CALL aprovar_candidatura_e_alocar(%s, %s)",
+                (candidatura_id, id_aprovador)
+            )
+            conn.commit()
+
     def create(self, payload):
         with get_connection() as conn:
             cursor = conn.cursor()
