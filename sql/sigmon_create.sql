@@ -135,8 +135,6 @@ CREATE TABLE alocacoes_monitores (
 CREATE TABLE documentos_anexos (
     id_documento    SERIAL PRIMARY KEY,
     id_usuario      INTEGER       REFERENCES usuarios(id_usuario),
-    id_edital       INTEGER       REFERENCES editais(id_edital),
-    id_candidatura  INTEGER       REFERENCES candidaturas(id_candidatura),
     nome_arquivo    VARCHAR(180)  NOT NULL,
     tipo_documento  VARCHAR(60)   NOT NULL,
     mime_type       VARCHAR(100)  NOT NULL,

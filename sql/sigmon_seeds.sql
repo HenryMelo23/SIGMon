@@ -96,8 +96,8 @@ SELECT setval('editais_id_edital_seq', 2);
 -- 1: historico de Rafael para BD
 -- ============================================================
 
-INSERT INTO documentos_anexos (id_documento, id_usuario, id_edital, id_candidatura, nome_arquivo, tipo_documento, mime_type, conteudo, data_upload) VALUES
-(1, 4, NULL, NULL, 'historico_rafael.pdf', 'Historico Escolar', 'application/pdf', decode('255044462d312e34', 'hex'), '2025-09-01');
+INSERT INTO documentos_anexos (id_documento, id_usuario, nome_arquivo, tipo_documento, mime_type, conteudo, data_upload) VALUES
+(1, 4, 'historico_rafael.pdf', 'Historico Escolar', 'application/pdf', decode('255044462d312e34', 'hex'), '2025-09-01');
 
 SELECT setval('documentos_anexos_id_documento_seq', 1);
 
