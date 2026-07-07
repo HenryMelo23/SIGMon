@@ -10,6 +10,13 @@ class HorarioRepository:
             rows = cursor.fetchall()
             return [Horario(*row) for row in rows]
 
+    def list_ativos(self):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM horarios WHERE ativo = TRUE ORDER BY turno, codigo")
+            rows = cursor.fetchall()
+            return [Horario(*row) for row in rows]
+
     def get_by_id(self, id):
         with get_connection() as conn:
             cursor = conn.cursor()

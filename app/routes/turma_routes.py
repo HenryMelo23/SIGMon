@@ -44,7 +44,7 @@ def form(id=None):
         turma=service.obter(id) if id else None,
         disciplinas=DisciplinaRepository().list_all(),
         professores=UsuarioRepository().list_by_papel("PROFESSOR"),
-        horarios=HorarioRepository().list_all(),
+        horarios=HorarioRepository().list_ativos(),
     )
 
 
